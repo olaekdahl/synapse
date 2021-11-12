@@ -1,0 +1,28 @@
+{
+	"name": "DestinationDataset_egc",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AWSTRG",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(pipeline().TriggerTime,'.parquet')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat(formatDateTime(utcnow(),'yyyy'),'/', formatDateTime(utcnow(),'MM'))",
+					"type": "Expression"
+				},
+				"container": "files"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

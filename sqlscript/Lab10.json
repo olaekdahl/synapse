@@ -1,0 +1,17 @@
+{
+	"name": "Lab10",
+	"properties": {
+		"content": {
+			"query": "\n CREATE TABLE dbo.VehicleAverages\n ( \n     [AverageEngineTemperature] [float] NOT  NULL,\n     [AverageSpeed] [float] NOT  NULL,\n     [Snapshot] [datetime] NOT  NULL\n )\n WITH\n (\n     DISTRIBUTION = ROUND_ROBIN,\n     CLUSTERED COLUMNSTORE INDEX\n )\n GO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "SQLPool01",
+				"poolName": "SQLPool01"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

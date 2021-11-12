@@ -1,0 +1,17 @@
+{
+	"name": "SourceDataset_egc",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADWLT",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "SalesLT",
+			"table": "Customer"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}
