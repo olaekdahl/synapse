@@ -17,150 +17,11 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "1",
 				"spark.dynamicAllocation.maxExecutors": "1",
-				"spark.autotune.trackingId": "dc62b09e-9470-40af-aa98-e67fbb0d28a3"
+				"spark.autotune.trackingId": "a0244113-dfd3-4d4f-93bb-1fe3f6a611bb"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1",
-				"state": {
-					"9b1390c6-ac3c-498f-bedd-4a8a97aae2e0": {
-						"type": "Synapse.DataFrame",
-						"sync_state": {
-							"table": {
-								"rows": [
-									{
-										"1": "2717",
-										"3": "2717",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "4002",
-										"3": "4002",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "1716",
-										"3": "1716",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "4520",
-										"3": "4520",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "951",
-										"3": "951",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "1817",
-										"3": "1817",
-										"4": "148",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "2634",
-										"3": "2634",
-										"4": "463",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "2795",
-										"3": "2795",
-										"4": "463",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "1946",
-										"3": "1946",
-										"4": "471",
-										"5": "false",
-										"6": "true"
-									},
-									{
-										"1": "4431",
-										"3": "4431",
-										"4": "471",
-										"5": "false",
-										"6": "true"
-									}
-								],
-								"schema": [
-									{
-										"key": "0",
-										"name": "visitorId",
-										"type": "int"
-									},
-									{
-										"key": "1",
-										"name": "productId",
-										"type": "int"
-									},
-									{
-										"key": "2",
-										"name": "itemsPurchasedLast12Months",
-										"type": "int"
-									},
-									{
-										"key": "3",
-										"name": "preferredProductId",
-										"type": "int"
-									},
-									{
-										"key": "4",
-										"name": "userId",
-										"type": "int"
-									},
-									{
-										"key": "5",
-										"name": "isTopProduct",
-										"type": "boolean"
-									},
-									{
-										"key": "6",
-										"name": "isPreferredProduct",
-										"type": "boolean"
-									}
-								]
-							},
-							"isSummary": false,
-							"language": "scala"
-						},
-						"persist_state": {
-							"view": {
-								"type": "details",
-								"chartOptions": {
-									"chartType": "bar",
-									"aggregationType": "sum",
-									"categoryFieldKeys": [
-										"1"
-									],
-									"seriesFieldKeys": [
-										"0"
-									],
-									"isStacked": false
-								}
-							}
-						}
-					}
-				}
-			},
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -172,18 +33,12 @@
 			"a365ComputeOptions": {
 				"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
 				"name": "SparkPool01",
-				"type": "Spark",
-				"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
-				},
-				"sparkVersion": "2.4",
-				"nodeCount": 3,
-				"cores": 4,
-				"memory": 28,
-				"extraHeader": null
-			}
+				}
+			},
+			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
@@ -196,10 +51,9 @@
 				},
 				"source": [
 					"%%pyspark\r\n",
-					"df = spark.read.load('abfss://wwi-02@asadatalakej2dxbgn.dfs.core.windows.net/top-products/*.parquet', format='parquet')\r\n",
+					"df = spark.read.load('abfss://wwi-02@asadatalakes4xt9l0.dfs.core.windows.net/top-products/*.parquet', format='parquet')\r\n",
 					"display(df.limit(10))"
 				],
-				"attachments": null,
 				"execution_count": 1
 			},
 			{
@@ -226,7 +80,6 @@
 					"\r\n",
 					"topPurchases.show(100)"
 				],
-				"attachments": null,
 				"execution_count": 2
 			},
 			{
@@ -252,7 +105,6 @@
 					"\r\n",
 					"topPreferredProducts.show(100)"
 				],
-				"attachments": null,
 				"execution_count": 3
 			},
 			{
@@ -285,7 +137,6 @@
 					"where seqnum <= 5 and IsTopProduct == true and IsPreferredProduct = true\r\n",
 					"order by a.UserId"
 				],
-				"attachments": null,
 				"execution_count": 4
 			},
 			{
@@ -306,7 +157,6 @@
 					"\r\n",
 					"top5Products.show(100)"
 				],
-				"attachments": null,
 				"execution_count": 5
 			},
 			{
@@ -325,7 +175,6 @@
 				"source": [
 					"print('before filter: ', topPreferredProducts.count(), ', after filter: ', top5Products.count())"
 				],
-				"attachments": null,
 				"execution_count": 6
 			},
 			{
@@ -350,7 +199,6 @@
 					"\r\n",
 					"top5ProductsOverall.show()"
 				],
-				"attachments": null,
 				"execution_count": 7
 			},
 			{
@@ -372,7 +220,6 @@
 					"# Generate random GUID\r\n",
 					"runId = uuid.uuid4()"
 				],
-				"attachments": null,
 				"execution_count": 8
 			},
 			{
@@ -394,9 +241,8 @@
 				"source": [
 					"%%pyspark\r\n",
 					"\r\n",
-					"top5ProductsOverall.write.parquet('abfss://wwi-02@asadatalakej2dxbgn.dfs.core.windows.net/top5-products/' + str(runId) + '.parquet')"
+					"top5ProductsOverall.write.parquet('abfss://wwi-02@asadatalakes4xt9l0.dfs.core.windows.net/top5-products/' + str(runId) + '.parquet')"
 				],
-				"attachments": null,
 				"execution_count": 9
 			}
 		]
