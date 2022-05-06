@@ -2,7 +2,7 @@
 	"name": "customer_profile_cosmosdb",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "asacosmosdbs4xt9l0",
+			"referenceName": "asacosmosdbvsl8na7",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],

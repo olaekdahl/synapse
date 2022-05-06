@@ -2,7 +2,7 @@
 	"name": "wwi02_online_user_profiles_01_adal",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "asadatalakes4xt9l0",
+			"referenceName": "asadatalakevsl8na7",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
