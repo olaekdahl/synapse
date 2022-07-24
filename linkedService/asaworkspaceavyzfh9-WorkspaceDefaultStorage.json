@@ -1,15 +1,15 @@
 {
-	"name": "asaworkspaces4xt9l0-WorkspaceDefaultStorage",
+	"name": "asaworkspaceavyzfh9-WorkspaceDefaultStorage",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
-		"annotations": [],
-		"type": "AzureBlobFS",
 		"typeProperties": {
 			"url": "https://asadatalakeavyzfh9.dfs.core.windows.net"
 		},
+		"type": "AzureBlobFS",
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
-		}
-	},
-	"type": "Microsoft.Synapse/workspaces/linkedservices"
+		},
+		"annotations": []
+	}
 }

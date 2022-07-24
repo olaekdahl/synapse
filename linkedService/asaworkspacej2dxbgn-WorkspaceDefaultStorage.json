@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://asadatalakes4xt9l0.dfs.core.windows.net"
+			"url": "https://asadatalakeavyzfh9.dfs.core.windows.net"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",

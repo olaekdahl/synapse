@@ -5,11 +5,11 @@
 		"annotations": [],
 		"type": "AzureSqlDW",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacej2dxbgn.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.highperf",
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspaceavyzfh9.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.highperf",
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "asakeyvaultj2dxbgn",
+					"referenceName": "asakeyvaultavyzfh9",
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "SQL-USER-ASA"

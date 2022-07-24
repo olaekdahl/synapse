@@ -1,19 +1,19 @@
 {
 	"name": "sqlpool01_import01",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureSqlDW",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspaces4xt9l0.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.import01",
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspaceavyzfh9.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.import01",
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "asakeyvaults4xt9l0",
+					"referenceName": "asakeyvaultavyzfh9",
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "SQL-USER-ASA"
 			}
 		}
-	},
-	"type": "Microsoft.Synapse/workspaces/linkedservices"
+	}
 }
