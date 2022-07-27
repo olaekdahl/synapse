@@ -1,0 +1,63 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "asaworkspacejw4kblp"
+		},
+		"CosmosDb1_connectionString": {
+			"value": ""
+		},
+		"asadatalakeavyzfh9_accountKey": {
+			"value": ""
+		},
+		"asadatalakejw4kblp_accountKey": {
+			"value": ""
+		},
+		"asastoreavyzfh9_connectionString": {
+			"value": ""
+		},
+		"asastorejw4kblp_connectionString": {
+			"value": ""
+		},
+		"asaworkspaceavyzfh9-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"asaworkspacejw4kblp-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"sqlpool01_connectionString": {
+			"value": ""
+		},
+		"sqlpool01_highperf_connectionString": {
+			"value": ""
+		},
+		"sqlpool01_import01_connectionString": {
+			"value": ""
+		},
+		"sqlpool01_workload01_connectionString": {
+			"value": ""
+		},
+		"sqlpool01_workload02_connectionString": {
+			"value": ""
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://asakeyvaultjw4kblp.vault.azure.net/"
+		},
+		"asadatalakeavyzfh9_properties_typeProperties_url": {
+			"value": "https://asadatalakejw4kblp.dfs.core.windows.net/"
+		},
+		"asadatalakejw4kblp_properties_typeProperties_url": {
+			"value": "https://asadatalakejw4kblp.dfs.core.windows.net"
+		},
+		"asakeyvaultavyzfh9_properties_typeProperties_baseUrl": {
+			"value": "https://asakeyvaultjw4kblp.vault.azure.net/"
+		},
+		"asakeyvaultjw4kblp_properties_typeProperties_baseUrl": {
+			"value": "https://asakeyvaultjw4kblp.vault.azure.net/"
+		},
+		"asaworkspacejw4kblp-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://asadatalakejw4kblp.dfs.core.windows.net"
+		}
+	}
+}
