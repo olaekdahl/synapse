@@ -9,7 +9,7 @@
 		"type": "CosmosDbSqlApiCollection",
 		"schema": {},
 		"typeProperties": {
-			"collectionName": "OnlineUserProfile01"
+			"collectionName": "UserProfileHTAP"
 		}
 	},
 	"type": "Microsoft.Synapse/workspaces/datasets"
