@@ -1,5 +1,5 @@
 {
-	"name": "AzureKeyVault1",
+	"name": "asakeyvaultjw4kblp",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],

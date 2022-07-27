@@ -1,5 +1,6 @@
 {
 	"name": "sqlpool01",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureSqlDW",
@@ -8,12 +9,11 @@
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "AzureKeyVault1",
+					"referenceName": "asakeyvaultjw4kblp",
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "SQL-USER-ASA"
 			}
 		}
-	},
-	"type": "Microsoft.Synapse/workspaces/linkedservices"
+	}
 }
