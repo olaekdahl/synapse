@@ -1,10 +1,6 @@
 {
 	"name": "asal400_customerprofile_cosmosdb",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "asacosmosdb01",
-			"type": "LinkedServiceReference"
-		},
 		"annotations": [],
 		"type": "CosmosDbSqlApiCollection",
 		"schema": {
