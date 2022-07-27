@@ -8,7 +8,7 @@
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "asakeyvaultavyzfh9",
+					"referenceName": "AzureKeyVault1",
 					"type": "LinkedServiceReference"
 				},
 				"secretName": "SQL-USER-ASA"
