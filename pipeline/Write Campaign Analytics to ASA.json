@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "asal400_lab2_writecampaignanalyticstoasa",
+				"description": "Test",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
