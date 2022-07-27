@@ -1,10 +1,6 @@
 {
 	"name": "DestinationDataset_egc",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "AWSTRG",
-			"type": "LinkedServiceReference"
-		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
