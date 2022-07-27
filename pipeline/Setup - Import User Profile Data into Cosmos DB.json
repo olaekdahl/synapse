@@ -19,7 +19,7 @@
 					"source": {
 						"type": "JsonSource",
 						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
+							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
 							"wildcardFolderPath": "online-user-profiles-01",
 							"wildcardFileName": "*.json",

@@ -2,7 +2,7 @@
 	"name": "Parquet1asal400_december_sales",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "asadatalakej2dxbgn",
+			"referenceName": "asadatalakeavyzfh9",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],
