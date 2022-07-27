@@ -1,5 +1,5 @@
 {
-	"name": "SQL script 3",
+	"name": "vw_CustomerInfo",
 	"properties": {
 		"content": {
 			"query": " CREATE VIEW CustomerInfo AS\n     SELECT * \n FROM OPENROWSET(\n         BULK 'https://asadatalakej2dxbgn.dfs.core.windows.net/wwi-02/customer-info/customerinfo.csv',\n         FORMAT = 'CSV',\n         PARSER_VERSION='2.0',\n         FIRSTROW=2\n     )\n     WITH (\n     [UserName] NVARCHAR (50),\n     [Gender] NVARCHAR (10),\n     [Phone] NVARCHAR (50),\n     [Email] NVARCHAR (100),\n     [CreditCard] NVARCHAR (50)\n     ) AS [r];\n     GO\n\n SELECT * FROM CustomerInfo;\n GO",
