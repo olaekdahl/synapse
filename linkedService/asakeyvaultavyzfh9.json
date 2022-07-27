@@ -1,0 +1,10 @@
+{
+	"name": "asakeyvaultavyzfh9",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://asakeyvaultjw4kblp.vault.azure.net/"
+		}
+	}
+}
