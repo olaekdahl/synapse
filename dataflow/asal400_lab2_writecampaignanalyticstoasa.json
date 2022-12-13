@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "asal400_campaign_analytics_source1",
+						"referenceName": "asal400_campaign_analytics_source",
 						"type": "DatasetReference"
 					},
 					"name": "CampaignAnalytics"
