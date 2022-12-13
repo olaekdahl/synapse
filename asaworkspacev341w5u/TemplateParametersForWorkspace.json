@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "asaworkspacev341w5u"
+		},
+		"CosmosDb1_connectionString": {
+			"value": ""
+		},
+		"asadatalakev341w5u_accountKey": {
+			"value": ""
+		},
+		"asastorev341w5u_connectionString": {
+			"value": ""
+		},
+		"asaworkspacev341w5u-WorkspaceDefaultSqlServer_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:asaworkspacev341w5u.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"sqlpool01_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.admin"
+		},
+		"sqlpool01_highperf_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.highperf"
+		},
+		"sqlpool01_import01_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.import01"
+		},
+		"sqlpool01_workload01_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.workload01"
+		},
+		"sqlpool01_workload02_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.workload02"
+		},
+		"asadatalakev341w5u_properties_typeProperties_url": {
+			"value": "https://asadatalakev341w5u.dfs.core.windows.net"
+		},
+		"asakeyvaultv341w5u_properties_typeProperties_baseUrl": {
+			"value": "https://asakeyvaultv341w5u.vault.azure.net/"
+		},
+		"asaworkspacev341w5u-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://asadatalakev341w5u.dfs.core.windows.net"
+		}
+	}
+}

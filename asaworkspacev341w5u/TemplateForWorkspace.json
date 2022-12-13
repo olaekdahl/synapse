@@ -1,0 +1,5379 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "asaworkspacev341w5u"
+		},
+		"CosmosDb1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'CosmosDb1'"
+		},
+		"asadatalakev341w5u_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'asadatalakev341w5u'"
+		},
+		"asastorev341w5u_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'asastorev341w5u'"
+		},
+		"asaworkspacev341w5u-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'asaworkspacev341w5u-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:asaworkspacev341w5u.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"sqlpool01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.admin"
+		},
+		"sqlpool01_highperf_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_highperf'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.highperf"
+		},
+		"sqlpool01_import01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_import01'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.import01"
+		},
+		"sqlpool01_workload01_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_workload01'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.workload01"
+		},
+		"sqlpool01_workload02_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqlpool01_workload02'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=asaworkspacev341w5u.sql.azuresynapse.net;Initial Catalog=SQLPool01;User ID=asa.sql.workload02"
+		},
+		"asadatalakev341w5u_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://asadatalakev341w5u.dfs.core.windows.net"
+		},
+		"asakeyvaultv341w5u_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://asakeyvaultv341w5u.vault.azure.net/"
+		},
+		"asaworkspacev341w5u-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://asadatalakev341w5u.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/9_Copy Cosmos DB Container')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"description": "Test",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "CosmosDbSqlApiSource",
+								"preferredRegions": []
+							},
+							"sink": {
+								"type": "CosmosDbSqlApiSink",
+								"writeBehavior": "insert"
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "asal400_customerprofile_cosmosdb",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cosmos_db_htap1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-10T16:59:36Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_customerprofile_cosmosdb')]",
+				"[concat(variables('workspaceId'), '/datasets/cosmos_db_htap1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy December Sales')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Sales",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "SqlDWSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "asastorev341w5u",
+									"type": "LinkedServiceReference"
+								}
+							},
+							"dataIntegrationUnits": 8
+						},
+						"inputs": [
+							{
+								"referenceName": "asal400_december_sales1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "asal400_saleheap_asa1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-10T04:22:53Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_december_sales1')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_saleheap_asa1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/asastorev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Setup - Import User Profile Data into Cosmos DB')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "Copy user profile data from Azure Storage to Azure Cosmos DB.",
+				"activities": [
+					{
+						"name": "Copy Customer Profile Data to Cosmos DB",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "online-user-profiles-01",
+									"wildcardFileName": "*.json",
+									"enablePartitionDiscovery": false
+								}
+							},
+							"sink": {
+								"type": "CosmosDbSqlApiSink",
+								"writeBehavior": "insert"
+							},
+							"enableStaging": false,
+							"parallelCopies": 100,
+							"enableSkipIncompatibleRow": true,
+							"dataIntegrationUnits": 16
+						},
+						"inputs": [
+							{
+								"referenceName": "wwi02_online_user_profiles_01_adal",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "customer_profile_cosmosdb1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-05-06T13:34:43Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/wwi02_online_user_profiles_01_adal')]",
+				"[concat(variables('workspaceId'), '/datasets/customer_profile_cosmosdb1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/User Profiles to Datalake')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "user_profiles_to_datalake",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"EcommerceUserProfiles": {},
+									"UserProfiles": {},
+									"DataLake": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Lab 7 -  Calculate Top 5 Products",
+						"type": "SynapseNotebook",
+						"dependsOn": [
+							{
+								"activity": "Data flow1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebook": {
+								"referenceName": "Lab 7 -  Calculate Top 5 Products",
+								"type": "NotebookReference"
+							},
+							"parameters": {
+								"runId": {
+									"value": {
+										"value": "@pipeline().RunId",
+										"type": "Expression"
+									},
+									"type": "string"
+								}
+							},
+							"snapshot": true,
+							"sparkPool": {
+								"referenceName": "SparkPool01",
+								"type": "BigDataPoolReference"
+							},
+							"conf": {
+								"spark.dynamicAllocation.enabled": null,
+								"spark.dynamicAllocation.minExecutors": null,
+								"spark.dynamicAllocation.maxExecutors": null
+							},
+							"numExecutors": null
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-10T13:24:50Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/user_profiles_to_datalake')]",
+				"[concat(variables('workspaceId'), '/notebooks/Lab 7 -  Calculate Top 5 Products')]",
+				"[concat(variables('workspaceId'), '/bigDataPools/SparkPool01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Write Campaign Analytics to ASA')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "asal400_lab2_writecampaignanalyticstoasa",
+						"description": "Test",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "asal400_lab2_writecampaignanalyticstoasa",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"CampaignAnalytics": {},
+									"CampaignAnalyticsASA": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-10T16:49:02Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/asal400_lab2_writecampaignanalyticstoasa')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Write User Profile Data to ASA')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "write_user_profile_to_asa",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "write_user_profile_to_asa1",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"EcommerceUserProfiles": {},
+									"UserProfiles": {},
+									"UserTopProductPurchasesASA": {},
+									"DataLake": {}
+								}
+							},
+							"staging": {
+								"linkedService": {
+									"referenceName": "asastorev341w5u",
+									"type": "LinkedServiceReference"
+								},
+								"folderPath": "staging/userprofiles"
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-11-10T04:23:16Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/dataflows/write_user_profile_to_asa1')]",
+				"[concat(variables('workspaceId'), '/linkedServices/asastorev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_campaign_analytics_source')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakev341w5u",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "campaignanalytics.csv",
+						"folderPath": "campaign-analytics",
+						"fileSystem": "wwi-02"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_customerprofile_cosmosdb')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDb1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"userId": {
+							"type": "integer"
+						},
+						"cartId": {
+							"type": "string"
+						},
+						"preferredProducts": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						},
+						"productReviews": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"reviewText": {
+										"type": "string"
+									},
+									"reviewDate": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"typeProperties": {
+					"collectionName": "OnlineUserProfile01"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/CosmosDb1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_december_sales1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakev341w5u",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "sale-20161230-snappy.parquet",
+						"folderPath": "campaign-analytics",
+						"fileSystem": "wwi-02"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "UTF8"
+					},
+					{
+						"name": "CustomerId",
+						"type": "INT32"
+					},
+					{
+						"name": "ProductId",
+						"type": "INT_16"
+					},
+					{
+						"name": "Quantity",
+						"type": "INT_8"
+					},
+					{
+						"name": "Price",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TotalAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "TransactionDate",
+						"type": "INT32"
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "DECIMAL",
+						"precision": 38,
+						"scale": 18
+					},
+					{
+						"name": "Hour",
+						"type": "INT_8"
+					},
+					{
+						"name": "Minute",
+						"type": "INT_8"
+					},
+					{
+						"name": "StoreId",
+						"type": "INT_16"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_ecommerce_userprofiles_source1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakev341w5u",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "online-user-profiles-02",
+						"fileSystem": "wwi-02"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"visitorId": {
+							"type": "integer"
+						},
+						"topProductPurchases": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"itemsPurchasedLast12Months": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_saleheap_asa1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01_import01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "CustomerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "Quantity",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Price",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TotalAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "TransactionDateId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProfitAmount",
+						"type": "decimal",
+						"precision": 9,
+						"scale": 2
+					},
+					{
+						"name": "Hour",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "Minute",
+						"type": "tinyint",
+						"precision": 3
+					},
+					{
+						"name": "StoreId",
+						"type": "smallint",
+						"precision": 5
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi_perf",
+					"table": "Sale_Heap"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01_import01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_wwi_campaign_analytics_asa1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "Region",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Country",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductCategory",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CampaignName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Revenue",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "RevenueTarget",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "CampaignAnalytics"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_wwi_usertopproductpurchases_asa1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqlpool01",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [
+					{
+						"name": "UserId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ItemsPurchasedLast12Months",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IsTopProduct",
+						"type": "bit"
+					},
+					{
+						"name": "IsPreferredProduct",
+						"type": "bit"
+					}
+				],
+				"typeProperties": {
+					"schema": "wwi",
+					"table": "UserTopProductPurchases"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/sqlpool01')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/cosmos_db_htap1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDb1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {},
+				"typeProperties": {
+					"collectionName": "UserProfileHTAP"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/CosmosDb1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/customer_profile_cosmosdb1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "CosmosDb1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "CosmosDbSqlApiCollection",
+				"schema": {
+					"type": "object",
+					"properties": {
+						"userId": {
+							"type": "integer"
+						},
+						"cartId": {
+							"type": "string"
+						},
+						"preferredProducts": {
+							"type": "array"
+						},
+						"productReviews": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"reviewText": {
+										"type": "string"
+									},
+									"reviewDate": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"typeProperties": {
+					"collectionName": "OnlineUserProfile01"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/CosmosDb1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/wwi02_online_user_profiles_01_adal')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "asadatalakev341w5u",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "*.json",
+						"folderPath": "online-user-profiles-01",
+						"fileSystem": "wwi-02"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"userId": {
+							"type": "integer"
+						},
+						"cartId": {
+							"type": "string"
+						},
+						"preferredProducts": {
+							"type": "array",
+							"items": {
+								"type": "integer"
+							}
+						},
+						"productReviews": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "integer"
+									},
+									"reviewText": {
+										"type": "string"
+									},
+									"reviewDate": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asadatalakev341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CosmosDb1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDb1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asadatalakev341w5u')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('asadatalakev341w5u_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('asadatalakev341w5u_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asakeyvaultv341w5u')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('asakeyvaultv341w5u_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asastorev341w5u')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('asastorev341w5u_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asaworkspacev341w5u-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('asaworkspacev341w5u-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asaworkspacev341w5u-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('asaworkspacev341w5u-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultv341w5u",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultv341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_highperf')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_highperf_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultv341w5u",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultv341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_import01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_import01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultv341w5u",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultv341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_workload01')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_workload01_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultv341w5u",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultv341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlpool01_workload02')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('sqlpool01_workload02_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "asakeyvaultv341w5u",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "SQL-USER-ASA"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/asakeyvaultv341w5u')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureIntegrationRuntime01')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "MemoryOptimized",
+							"coreCount": 16,
+							"timeToLive": 60
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/asal400_lab2_writecampaignanalyticstoasa')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "asal400_campaign_analytics_source",
+								"type": "DatasetReference"
+							},
+							"name": "CampaignAnalytics"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "asal400_wwi_campaign_analytics_asa1",
+								"type": "DatasetReference"
+							},
+							"name": "CampaignAnalyticsASA"
+						}
+					],
+					"transformations": [
+						{
+							"name": "MapCampaignAnalytics"
+						},
+						{
+							"name": "ConvertColumnTypesAndValues"
+						},
+						{
+							"name": "SelectCampaignAnalyticsColumns"
+						}
+					],
+					"script": "source(output(\n\t\t{_col0_} as string,\n\t\t{_col1_} as string,\n\t\t{_col2_} as string,\n\t\t{_col3_} as string,\n\t\t{_col4_} as string,\n\t\t{_col5_} as double,\n\t\t{_col6_} as string,\n\t\t{_col7_} as double,\n\t\t{_col8_} as string,\n\t\t{_col9_} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tskipLines: 1) ~> CampaignAnalytics\nCampaignAnalytics select(mapColumn(\n\t\tRegion = {_col0_},\n\t\tCountry = {_col1_},\n\t\tProductCategory = {_col2_},\n\t\tCampaignName = {_col3_},\n\t\tRevenuePart1 = {_col4_},\n\t\tRevenue = {_col5_},\n\t\tRevenueTargetPart1 = {_col6_},\n\t\tRevenueTarget = {_col7_},\n\t\tCity = {_col8_},\n\t\tState = {_col9_}\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> MapCampaignAnalytics\nMapCampaignAnalytics derive(Revenue = toDecimal(replace(concat(toString(RevenuePart1), toString(Revenue)), '\\\\', ''), 10, 2, '$###,###.##'),\n\t\tRevenueTarget = toDecimal(replace(concat(toString(RevenueTargetPart1), toString(RevenueTarget)), '\\\\', ''), 10, 2, '$###,###.##')) ~> ConvertColumnTypesAndValues\nConvertColumnTypesAndValues select(mapColumn(\n\t\tRegion,\n\t\tCountry,\n\t\tProductCategory,\n\t\tCampaignName,\n\t\tRevenue,\n\t\tRevenueTarget,\n\t\tCity,\n\t\tState\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCampaignAnalyticsColumns\nSelectCampaignAnalyticsColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tProductCategory as string,\n\t\tCampaignName as string,\n\t\tRevenue as decimal(10,2),\n\t\tRevenueTarget as decimal(10,2),\n\t\tCity as string,\n\t\tState as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tstaged: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> CampaignAnalyticsASA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_campaign_analytics_source')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_wwi_campaign_analytics_asa1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/user_profiles_to_datalake')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "asal400_ecommerce_userprofiles_source1",
+								"type": "DatasetReference"
+							},
+							"name": "EcommerceUserProfiles"
+						},
+						{
+							"dataset": {
+								"referenceName": "asal400_customerprofile_cosmosdb",
+								"type": "DatasetReference"
+							},
+							"name": "UserProfiles"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "asal400_ecommerce_userprofiles_source1",
+								"type": "DatasetReference"
+							},
+							"name": "DataLake"
+						}
+					],
+					"transformations": [
+						{
+							"name": "userId"
+						},
+						{
+							"name": "UserTopProducts"
+						},
+						{
+							"name": "DerivedProductColumns"
+						},
+						{
+							"name": "UserPreferredProducts"
+						},
+						{
+							"name": "JoinTopProductsWithPreferredProducts"
+						},
+						{
+							"name": "DerivedColumnsForMerge"
+						},
+						{
+							"name": "Filter1"
+						}
+					],
+					"script": "source(output(\n\t\tvisitorId as string,\n\t\ttopProductPurchases as (productId as string, itemsPurchasedLast12Months as string)[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments',\n\twildcardPaths:['online-user-profiles-02/*.json']) ~> EcommerceUserProfiles\nsource(output(\n\t\tcartId as string,\n\t\tpreferredProducts as integer[],\n\t\tproductReviews as (productId as integer, reviewDate as string, reviewText as string)[],\n\t\tuserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'document') ~> UserProfiles\nEcommerceUserProfiles derive(visitorId = toInteger(visitorId)) ~> userId\nuserId foldDown(unroll(topProductPurchases),\n\tmapColumn(\n\t\tvisitorId,\n\t\tproductId = topProductPurchases.productId,\n\t\titemsPurchasedLast12Months = topProductPurchases.itemsPurchasedLast12Months\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> UserTopProducts\nUserTopProducts derive(productId = toInteger(productId),\n\t\titemsPurchasedLast12Months = toInteger(itemsPurchasedLast12Months)) ~> DerivedProductColumns\nUserProfiles foldDown(unroll(preferredProducts),\n\tmapColumn(\n\t\tpreferredProductId = preferredProducts,\n\t\tuserId\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> UserPreferredProducts\nDerivedProductColumns, UserPreferredProducts join(visitorId == userId,\n\tjoinType:'outer',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tpartitionBy('hash', 30,\n\t\tproductId\n\t),\n\tbroadcast: 'left')~> JoinTopProductsWithPreferredProducts\nJoinTopProductsWithPreferredProducts derive(isTopProduct = toBoolean(iif(isNull(productId), 'false', 'true')),\n\t\tisPreferredProduct = toBoolean(iif(isNull(preferredProductId), 'false', 'true')),\n\t\tproductId = iif(isNull(productId), preferredProductId, productId),\n\t\tuserId = iif(isNull(userId), visitorId, userId)) ~> DerivedColumnsForMerge\nDerivedColumnsForMerge filter(!isNull(productId)) ~> Filter1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tvisitorId as integer,\n\t\ttopProductPurchases as (productId as integer, itemsPurchasedLast12Months as integer)[]\n\t),\n\ttruncate: true,\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tvisitorId,\n\t\tproductId,\n\t\titemsPurchasedLast12Months,\n\t\tpreferredProductId,\n\t\tuserId,\n\t\tisTopProduct,\n\t\tisPreferredProduct\n\t),\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tfileSystem: 'wwi-02',\n\tfolderPath: 'top-products',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0) ~> DataLake"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_ecommerce_userprofiles_source1')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_customerprofile_cosmosdb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/write_user_profile_to_asa1')]",
+			"type": "Microsoft.Synapse/workspaces/dataflows",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "asal400_ecommerce_userprofiles_source1",
+								"type": "DatasetReference"
+							},
+							"name": "EcommerceUserProfiles"
+						},
+						{
+							"dataset": {
+								"referenceName": "asal400_customerprofile_cosmosdb",
+								"type": "DatasetReference"
+							},
+							"name": "UserProfiles"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "asal400_wwi_usertopproductpurchases_asa1",
+								"type": "DatasetReference"
+							},
+							"name": "UserTopProductPurchasesASA"
+						},
+						{
+							"dataset": {
+								"referenceName": "wwi02_online_user_profiles_01_adal",
+								"type": "DatasetReference"
+							},
+							"name": "DataLake"
+						}
+					],
+					"transformations": [
+						{
+							"name": "userId"
+						},
+						{
+							"name": "UserTopProducts"
+						},
+						{
+							"name": "DeriveProductColumns"
+						},
+						{
+							"name": "UserPreferredProducts"
+						},
+						{
+							"name": "JoinTopProductsWithPreferredProducts"
+						},
+						{
+							"name": "DerivedColumnsForMerge"
+						},
+						{
+							"name": "Filter1"
+						}
+					],
+					"script": "source(output(\n\t\tvisitorId as integer,\n\t\ttopProductPurchases as (productId as integer, itemsPurchasedLast12Months as integer)[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments',\n\twildcardPaths:['online-user-profiles-02/*.json']) ~> EcommerceUserProfiles\nsource(output(\n\t\tcartId as string,\n\t\tpreferredProducts as integer[],\n\t\tproductReviews as (productId as integer, reviewDate as string, reviewText as string)[],\n\t\tuserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'document') ~> UserProfiles\nEcommerceUserProfiles derive(visitorId = toInteger(visitorId)) ~> userId\nuserId foldDown(unroll(topProductPurchases),\n\tmapColumn(\n\t\tvisitorId,\n\t\tproductId = topProductPurchases.productId,\n\t\titemsPurchasedLast12Months = topProductPurchases.itemsPurchasedLast12Months\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> UserTopProducts\nUserTopProducts derive(productId = toInteger(productId),\n\t\titemsPurchasedLast12Months = toInteger(itemsPurchasedLast12Months)) ~> DeriveProductColumns\nUserProfiles foldDown(unroll(preferredProducts),\n\tmapColumn(\n\t\tpreferredProductId = preferredProducts,\n\t\tuserId\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> UserPreferredProducts\nDeriveProductColumns, UserPreferredProducts join(visitorId == userId,\n\tjoinType:'outer',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tpartitionBy('hash', 30,\n\t\tproductId\n\t),\n\tbroadcast: 'left')~> JoinTopProductsWithPreferredProducts\nJoinTopProductsWithPreferredProducts derive(isTopProduct = toBoolean(iif(isNull(productId), 'false', 'true')),\n\t\tisPreferredProduct = toBoolean(iif(isNull(preferredProductId), 'false', 'true')),\n\t\tproductId = iif(isNull(productId), preferredProductId, productId),\n\t\tuserId = iif(isNull(userId), visitorId, userId)) ~> DerivedColumnsForMerge\nDerivedColumnsForMerge filter(!isNull(productId)) ~> Filter1\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tUserId as integer,\n\t\tProductId as integer,\n\t\tItemsPurchasedLast12Months as integer,\n\t\tIsTopProduct as boolean,\n\t\tIsPreferredProduct as boolean\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tUserId = userId,\n\t\tProductId = productId,\n\t\tItemsPurchasedLast12Months = itemsPurchasedLast12Months,\n\t\tIsTopProduct = isTopProduct,\n\t\tIsPreferredProduct = isPreferredProduct\n\t)) ~> UserTopProductPurchasesASA\nFilter1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tuserId as integer,\n\t\tcartId as string,\n\t\tpreferredProducts as integer[],\n\t\tproductReviews as (productId as integer, reviewText as string, reviewDate as string)[]\n\t),\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tmapColumn(\n\t\tvisitorId,\n\t\tproductId,\n\t\titemsPurchasedLast12Months,\n\t\tpreferredProductId,\n\t\tuserId,\n\t\tisTopProduct,\n\t\tisPreferredProduct\n\t)) ~> DataLake"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/asal400_ecommerce_userprofiles_source1')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_customerprofile_cosmosdb')]",
+				"[concat(variables('workspaceId'), '/datasets/asal400_wwi_usertopproductpurchases_asa1')]",
+				"[concat(variables('workspaceId'), '/datasets/wwi02_online_user_profiles_01_adal')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/9_HTAP')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [userId]\n,[cartId]\n,[preferredProducts]\n,[productReviews]\n,[productId]\n,[reviewText]\n FROM [dbo].[UserProfileHTAP]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Profiles",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/9_User Profile HTAP')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": " USE master\n GO\n\n IF DB_ID (N'Profiles') IS NULL\n BEGIN\n     CREATE DATABASE Profiles;\n END\n GO\n\n USE Profiles\n GO\n\n DROP VIEW IF EXISTS UserProfileHTAP;\n GO\n\n CREATE VIEW UserProfileHTAP\n AS\n SELECT\n     *\n FROM OPENROWSET(\n     'CosmosDB',\n     N'account=asacosmosdbj2dxbgn;database=CustomerProfile;key=Lj70MQ6nyu5lK2RZ5NXAavLMGRP2uUzPRtnbCqKyjt8HaQhmDPUhb807t2lZAayyFVDZ0uji0DDGH7iLZVGpKg==',\n     UserProfileHTAP\n )\n WITH (\n     userId bigint,\n     cartId varchar(50),\n     preferredProducts varchar(max),\n     productReviews varchar(max)\n ) AS profiles\n CROSS APPLY OPENJSON (productReviews)\n WITH (\n     productId bigint,\n     reviewText varchar(1000)\n ) AS reviews\n GO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Profiles",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DWU Settings')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"description": "Connect to master.",
+				"content": {
+					"query": "SELECT  db.name [Database]\n,        ds.edition [Edition]\n,        ds.service_objective [Service Objective]\n,       ds.elastic_pool_name [Elastic Pool Name]\nFROM    sys.database_service_objectives   AS ds\nJOIN    sys.databases                     AS db ON ds.database_id = db.database_id\n;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 5 - Load Data')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- PolyBase 1\nINSERT INTO [wwi_staging].[SaleHeap]\nSELECT *\nFROM [wwi_external].[Sales]\n\n--40 seconds\nSELECT COUNT(1) FROM wwi_staging.SaleHeap(nolock)\n\nTRUNCATE TABLE wwi_staging.SaleHeap;\nGO\n\n-- Replace SUFFIX with the unique suffix for your resources\nCOPY INTO wwi_staging.SaleHeap\nFROM 'https://asadatalakes4xt9l0.dfs.core.windows.net/wwi-02/sale-small/Year=2019'\nWITH (\n    FILE_TYPE = 'PARQUET',\n    COMPRESSION = 'SNAPPY'\n)\nGO\n\n--36 seconds\n\nCREATE TABLE [wwi_staging].DailySalesCounts\n    (\n        [Date] [int]  NOT NULL,\n        [NorthAmerica] [int]  NOT NULL,\n        [SouthAmerica] [int]  NOT NULL,\n        [Europe] [int]  NOT NULL,\n        [Africa] [int]  NOT NULL,\n        [Asia] [int]  NOT NULL\n    )\nGO\n\n-- Replace SUFFIX with the unique suffix for your resources\nCOPY INTO wwi_staging.DailySalesCounts\nFROM 'https://asadatalakes4xt9l0.dfs.core.windows.net/wwi-02/campaign-analytics/dailycounts.txt'\nWITH (\n    FILE_TYPE = 'CSV',\n    FIELDTERMINATOR='.',\n    ROWTERMINATOR=','\n)\nGO\n\nSELECT * FROM [wwi_staging].DailySalesCounts\nORDER BY [Date] DESC\n\n--PolyBase 2\nCREATE EXTERNAL FILE FORMAT csv_dailysales\nWITH (\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIELD_TERMINATOR = '.',\n        DATE_FORMAT = '',\n        USE_TYPE_DEFAULT = False\n    )\n);\nGO\n\nCREATE EXTERNAL TABLE [wwi_external].DailySalesCounts\n    (\n        [Date] [int]  NOT NULL,\n        [NorthAmerica] [int]  NOT NULL,\n        [SouthAmerica] [int]  NOT NULL,\n        [Europe] [int]  NOT NULL,\n        [Africa] [int]  NOT NULL,\n        [Asia] [int]  NOT NULL\n    )\nWITH\n    (\n        LOCATION = '/campaign-analytics/dailycounts.txt',  \n        DATA_SOURCE = ABSS,\n        FILE_FORMAT = csv_dailysales\n    )  \nGO\nINSERT INTO [wwi_staging].[DailySalesCounts]\nSELECT *\nFROM [wwi_external].[DailySalesCounts]\n\nselect * from wwi_staging.[DailySalesCounts];\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 5 - Workload')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- Drop objects if they exist\nIF EXISTS (SELECT * FROM sys.workload_management_workload_classifiers WHERE [name] = 'HeavyLoader')\nBEGIN\n    DROP WORKLOAD CLASSIFIER HeavyLoader\nEND;\n\nIF EXISTS (SELECT * FROM sys.workload_management_workload_groups WHERE name = 'BigDataLoad')\nBEGIN\n    DROP WORKLOAD GROUP BigDataLoad\nEND;\n\n--Create workload group\nCREATE WORKLOAD GROUP BigDataLoad WITH\n(\n    MIN_PERCENTAGE_RESOURCE = 50, -- integer value\n    REQUEST_MIN_RESOURCE_GRANT_PERCENT = 25, --  (guaranteed min 4 concurrency)\n    CAP_PERCENTAGE_RESOURCE = 100\n);\n\n-- Create workload classifier\nCREATE WORKLOAD Classifier HeavyLoader WITH\n(\n    Workload_Group ='BigDataLoad',\n    MemberName='asa.sql.import01',\n    IMPORTANCE = HIGH\n);\n\n-- View classifiers\nSELECT * FROM sys.workload_management_workload_classifiers",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT * FROM sys.schemas WHERE name = 'wwi_staging'\nGO\nCREATE TABLE [wwi_staging].[SaleHeap]\n( \n    [TransactionId] [uniqueidentifier]  NOT NULL,\n    [CustomerId] [int]  NOT NULL,\n    [ProductId] [smallint]  NOT NULL,\n    [Quantity] [smallint]  NOT NULL,\n    [Price] [decimal](9,2)  NOT NULL,\n    [TotalAmount] [decimal](9,2)  NOT NULL,\n    [TransactionDate] [int]  NOT NULL,\n    [ProfitAmount] [decimal](9,2)  NOT NULL,\n    [Hour] [tinyint]  NOT NULL,\n    [Minute] [tinyint]  NOT NULL,\n    [StoreId] [smallint]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = ROUND_ROBIN,\n    HEAP\n)\nGO\nCREATE TABLE [wwi_staging].[Sale]\n(\n    [TransactionId] [uniqueidentifier]  NOT NULL,\n    [CustomerId] [int]  NOT NULL,\n    [ProductId] [smallint]  NOT NULL,\n    [Quantity] [smallint]  NOT NULL,\n    [Price] [decimal](9,2)  NOT NULL,\n    [TotalAmount] [decimal](9,2)  NOT NULL,\n    [TransactionDate] [int]  NOT NULL,\n    [ProfitAmount] [decimal](9,2)  NOT NULL,\n    [Hour] [tinyint]  NOT NULL,\n    [Minute] [tinyint]  NOT NULL,\n    [StoreId] [smallint]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [CustomerId] ),\n    CLUSTERED COLUMNSTORE INDEX,\n    PARTITION\n    (\n        [TransactionDate] RANGE RIGHT FOR VALUES (20100101, 20100201, 20100301, 20100401, 20100501, 20100601, 20100701, 20100801, 20100901, 20101001, 20101101, 20101201, 20110101, 20110201, 20110301, 20110401, 20110501, 20110601, 20110701, 20110801, 20110901, 20111001, 20111101, 20111201, 20120101, 20120201, 20120301, 20120401, 20120501, 20120601, 20120701, 20120801, 20120901, 20121001, 20121101, 20121201, 20130101, 20130201, 20130301, 20130401, 20130501, 20130601, 20130701, 20130801, 20130901, 20131001, 20131101, 20131201, 20140101, 20140201, 20140301, 20140401, 20140501, 20140601, 20140701, 20140801, 20140901, 20141001, 20141101, 20141201, 20150101, 20150201, 20150301, 20150401, 20150501, 20150601, 20150701, 20150801, 20150901, 20151001, 20151101, 20151201, 20160101, 20160201, 20160301, 20160401, 20160501, 20160601, 20160701, 20160801, 20160901, 20161001, 20161101, 20161201, 20170101, 20170201, 20170301, 20170401, 20170501, 20170601, 20170701, 20170801, 20170901, 20171001, 20171101, 20171201, 20180101, 20180201, 20180301, 20180401, 20180501, 20180601, 20180701, 20180801, 20180901, 20181001, 20181101, 20181201, 20190101, 20190201, 20190301, 20190401, 20190501, 20190601, 20190701, 20190801, 20190901, 20191001, 20191101, 20191201)\n    )\n )\n GO\n-- Replace SUFFIX with the lab workspace id.\nCREATE EXTERNAL DATA SOURCE ABSS\nWITH\n( TYPE = HADOOP,\n    LOCATION = 'abfss://wwi-02@asadatalakej2dxbgn.dfs.core.windows.net'\n);\nGO\nCREATE EXTERNAL FILE FORMAT [ParquetFormat]\nWITH (\n    FORMAT_TYPE = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n)\nGO\n\nCREATE SCHEMA [wwi_external];\nGO\n\nCREATE EXTERNAL TABLE [wwi_external].Sales\n    (\n        [TransactionId] [nvarchar](36)  NOT NULL,\n        [CustomerId] [int]  NOT NULL,\n        [ProductId] [smallint]  NOT NULL,\n        [Quantity] [smallint]  NOT NULL,\n        [Price] [decimal](9,2)  NOT NULL,\n        [TotalAmount] [decimal](9,2)  NOT NULL,\n        [TransactionDate] [int]  NOT NULL,\n        [ProfitAmount] [decimal](9,2)  NOT NULL,\n        [Hour] [tinyint]  NOT NULL,\n        [Minute] [tinyint]  NOT NULL,\n        [StoreId] [smallint]  NOT NULL\n    )\nWITH\n    (\n        LOCATION = '/sale-small/Year=2019',  \n        DATA_SOURCE = ABSS,\n        FILE_FORMAT = [ParquetFormat]  \n    )  \nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 6')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE TABLE [wwi].[UserTopProductPurchases]\n(\n    [UserId] [int]  NOT NULL,\n    [ProductId] [int]  NOT NULL,\n    [ItemsPurchasedLast12Months] [int]  NULL,\n    [IsTopProduct] [bit]  NOT NULL,\n    [IsPreferredProduct] [bit]  NOT NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [UserId] ),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\nCREATE TABLE [wwi].[CampaignAnalytics]\n(\n    [Region] [nvarchar](50)  NOT NULL,\n    [Country] [nvarchar](30)  NOT NULL,\n    [ProductCategory] [nvarchar](50)  NOT NULL,\n    [CampaignName] [nvarchar](500)  NOT NULL,\n    [Revenue] [decimal](10,2)  NULL,\n    [RevenueTarget] [decimal](10,2)  NULL,\n    [City] [nvarchar](50)  NULL,\n    [State] [nvarchar](25)  NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH ( [Region] ),\n    CLUSTERED COLUMNSTORE INDEX\n)",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab10')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\n CREATE TABLE dbo.VehicleAverages\n ( \n     [AverageEngineTemperature] [float] NOT  NULL,\n     [AverageSpeed] [float] NOT  NULL,\n     [Snapshot] [datetime] NOT  NULL\n )\n WITH\n (\n     DISTRIBUTION = ROUND_ROBIN,\n     CLUSTERED COLUMNSTORE INDEX\n )\n GO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab10_2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [AverageEngineTemperature]\n,[AverageSpeed]\n,[Snapshot]\n FROM [dbo].[VehicleAverages]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "SQLPool01",
+						"poolName": "SQLPool01"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/select-from-parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": " SELECT\n     COUNT(*)\n FROM\n     OPENROWSET(\n         BULK 'https://asadatalakejw4kblp.dfs.core.windows.net/wwi-02/sale-small/Year=2019/*/*/*/*',\n         FORMAT='PARQUET'\n     ) AS [r];",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/vw_CustomerInfo')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": " CREATE VIEW CustomerInfo AS\n     SELECT * \n FROM OPENROWSET(\n         BULK 'https://asadatalakej2dxbgn.dfs.core.windows.net/wwi-02/customer-info/customerinfo.csv',\n         FORMAT = 'CSV',\n         PARSER_VERSION='2.0',\n         FIRSTROW=2\n     )\n     WITH (\n     [UserName] NVARCHAR (50),\n     [Gender] NVARCHAR (10),\n     [Phone] NVARCHAR (50),\n     [Email] NVARCHAR (100),\n     [CreditCard] NVARCHAR (50)\n     ) AS [r];\n     GO\n\n SELECT * FROM CustomerInfo;\n GO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "demo",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/9_HTAP')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 1,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "1",
+						"spark.dynamicAllocation.maxExecutors": "1",
+						"spark.autotune.trackingId": "e1c49abf-0c25-4879-a6a5-e320f799142f"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1",
+						"state": {
+							"d79a5204-0fe5-4711-aab6-ca0a48e12608": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "6Z4bAJmi7yGVngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "48391",
+												"3": "c54a9f01-d0ba-445f-a920-ed74d343f02a",
+												"4": [],
+												"5": [
+													{
+														"productId": 1917,
+														"reviewText": "My co-worker Ali has one of these. He says it looks towering.",
+														"reviewDate": "2017-11-15T17:47:37.1543848+00:00"
+													},
+													{
+														"productId": 4012,
+														"reviewText": "My neighbor Isabela has one of these. She works as a taxidermist and she says it looks monochromatic.",
+														"reviewDate": "2018-03-12T07:14:25.2793383+00:00"
+													},
+													{
+														"productId": 1206,
+														"reviewText": "It only works when I'm South Korea.",
+														"reviewDate": "2018-07-13T09:21:33.660689+00:00"
+													},
+													{
+														"productId": 4876,
+														"reviewText": "i use it barely when i'm in my store.",
+														"reviewDate": "2019-12-08T00:38:20.0355169+00:00"
+													},
+													{
+														"productId": 1294,
+														"reviewText": "i use it for 10 weeks when i'm in my sauna.",
+														"reviewDate": "2019-01-28T20:31:45.3276289+00:00"
+													}
+												],
+												"6": "0656c56f-d179-4457-b59d-ccee8614ecb6",
+												"7": "\"fb00d3c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGWngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "52191",
+												"3": "7da76b06-0a7c-4e3d-8545-c5c9f430f229",
+												"4": [
+													2345,
+													444,
+													1596,
+													4752
+												],
+												"5": [
+													{
+														"productId": 1652,
+														"reviewText": "I tried to belly-flop it but got Turkish Delight all over it.",
+														"reviewDate": "2017-06-21T10:14:35.7204375+00:00"
+													},
+													{
+														"productId": 1243,
+														"reviewText": "talk about sadness.",
+														"reviewDate": "2018-11-07T19:59:55.5323558+00:00"
+													}
+												],
+												"6": "444c4d5e-ec94-42f2-a680-175b0159f3bb",
+												"7": "\"fb00d4c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGXngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "51106",
+												"3": "b95922ed-5324-481a-98ab-0d5ae66a88ee",
+												"4": [
+													2247,
+													220,
+													721,
+													1411
+												],
+												"5": [
+													{
+														"productId": 1823,
+														"reviewText": "This generating works excessively well. It speedily improves my baseball by a lot.",
+														"reviewDate": "2018-10-22T01:15:06.984903+00:00"
+													},
+													{
+														"productId": 2195,
+														"reviewText": "one of my hobbies is baking. and when i'm baking this works great.",
+														"reviewDate": "2019-10-30T12:17:44.6299364+00:00"
+													},
+													{
+														"productId": 4813,
+														"reviewText": "My locust loves to play with it.",
+														"reviewDate": "2018-04-09T23:26:08.1958889+00:00"
+													},
+													{
+														"productId": 159,
+														"reviewText": "This Corporate works excessively well. It mortally improves my golf by a lot.",
+														"reviewDate": "2017-10-29T20:46:12.0445352+00:00"
+													}
+												],
+												"6": "7e837764-6c1b-414c-a0db-994ae1a028ad",
+												"7": "\"fb00d5c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGYngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "60504",
+												"3": "96f97207-c1da-48a6-89de-38ac0d5ffb54",
+												"4": [],
+												"5": [
+													{
+														"productId": 908,
+														"reviewText": "This Security works certainly well. It perfectly improves my tennis by a lot.",
+														"reviewDate": "2020-02-16T19:15:27.1979393+00:00"
+													},
+													{
+														"productId": 876,
+														"reviewText": "this Indiana is standard.",
+														"reviewDate": "2020-03-10T04:29:07.2444099+00:00"
+													}
+												],
+												"6": "e958a847-615d-4e82-8699-04c5a6f1b3c8",
+												"7": "\"fb00d6c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGZngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "69552",
+												"3": "43745ba9-ed5e-4cf9-b9d0-524421f57a1b",
+												"4": [
+													1817,
+													4785,
+													2382,
+													20
+												],
+												"5": [
+													{
+														"productId": 3659,
+														"reviewText": "this optical is vertical.",
+														"reviewDate": "2019-05-17T01:27:29.6952668+00:00"
+													},
+													{
+														"productId": 4152,
+														"reviewText": "It only works when I'm Wake Island.",
+														"reviewDate": "2017-05-13T17:40:53.8789057+00:00"
+													},
+													{
+														"productId": 2975,
+														"reviewText": "i use it once a week when i'm in my firetruck.",
+														"reviewDate": "2017-01-13T00:31:29.2403021+00:00"
+													},
+													{
+														"productId": 4896,
+														"reviewText": "i use it once in a while when i'm in my ring.",
+														"reviewDate": "2016-08-26T19:54:28.1780871+00:00"
+													},
+													{
+														"productId": 3759,
+														"reviewText": "My neighbor Lonnie has one of these. She works as a hobbit and she says it looks microscopic.",
+														"reviewDate": "2016-07-07T05:04:53.2938511+00:00"
+													}
+												],
+												"6": "eda638b3-418e-491e-b3bb-699885d4dab1",
+												"7": "\"fb00d7c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGangAAAAAAAA==",
+												"1": "1636563768",
+												"2": "40917",
+												"3": "1f07d4f3-fb01-4988-b812-9d120f03ec6f",
+												"4": [
+													1560,
+													1559,
+													4953,
+													618,
+													559,
+													611,
+													2505,
+													1801,
+													1726
+												],
+												"5": [
+													{
+														"productId": 589,
+														"reviewText": "heard about this on instrumental country radio, decided to give it a try.",
+														"reviewDate": "2020-04-18T08:35:05.1783495+00:00"
+													},
+													{
+														"productId": 1650,
+														"reviewText": "one of my hobbies is cooking. and when i'm cooking this works great.",
+														"reviewDate": "2019-05-07T22:17:47.0524377+00:00"
+													},
+													{
+														"productId": 4666,
+														"reviewText": "I saw one of these in Libya and I bought one.",
+														"reviewDate": "2017-01-17T07:15:37.7090528+00:00"
+													},
+													{
+														"productId": 4604,
+														"reviewText": "this clicks-and-mortar is standard.",
+														"reviewDate": "2018-07-13T17:28:39.9302726+00:00"
+													},
+													{
+														"productId": 2272,
+														"reviewText": "this Intelligent is top-notch.",
+														"reviewDate": "2018-08-04T09:13:37.2728626+00:00"
+													}
+												],
+												"6": "9d695695-a2a3-4710-9877-d82502bc0a8e",
+												"7": "\"fb00d8c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGbngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "42669",
+												"3": "27e836ec-5fca-4e3c-a583-7dd9b22693bf",
+												"4": [
+													2150,
+													1585
+												],
+												"5": [
+													{
+														"productId": 3770,
+														"reviewText": "My neighbor Georgine has one of these. She works as a fireman and she says it looks colorful.",
+														"reviewDate": "2018-05-23T02:33:59.3909597+00:00"
+													},
+													{
+														"productId": 4671,
+														"reviewText": "i use it every Tuesday when i'm in my homeless shelter.",
+														"reviewDate": "2018-01-27T19:37:29.5927804+00:00"
+													},
+													{
+														"productId": 1367,
+														"reviewText": "talk about shame.",
+														"reviewDate": "2020-04-06T07:09:23.9341835+00:00"
+													},
+													{
+														"productId": 1919,
+														"reviewText": "one of my hobbies is poetry. and when i'm writing poems this works great.",
+														"reviewDate": "2019-02-26T00:19:01.2804968+00:00"
+													},
+													{
+														"productId": 52,
+														"reviewText": "heard about this on rebetiko radio, decided to give it a try.",
+														"reviewDate": "2020-05-02T16:12:32.6890486+00:00"
+													}
+												],
+												"6": "578e8d04-a979-4565-812d-09346baf222e",
+												"7": "\"fb00d9c2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGcngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "43661",
+												"3": "8b4469c2-827f-4bd0-b46b-151587103fe3",
+												"4": [
+													1440,
+													3279,
+													2778,
+													902,
+													59,
+													3919
+												],
+												"5": [],
+												"6": "93c58a67-8efb-466d-9c1a-946ea9352d7e",
+												"7": "\"fb00dac2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGdngAAAAAAAA==",
+												"1": "1636563768",
+												"2": "49181",
+												"3": "6de345c1-6d34-4e89-9a32-0c24fab18eb1",
+												"4": [
+													4789,
+													230,
+													468,
+													23,
+													2138
+												],
+												"5": [
+													{
+														"productId": 4454,
+														"reviewText": "My neighbor Aldona has one of these. She works as a butler and she says it looks humongous.",
+														"reviewDate": "2020-04-14T10:35:59.0928011+00:00"
+													},
+													{
+														"productId": 4217,
+														"reviewText": "This Colorado works quite well. It pointedly improves my golf by a lot.",
+														"reviewDate": "2016-06-05T04:46:34.4406303+00:00"
+													},
+													{
+														"productId": 3114,
+														"reviewText": "this bandwidth-monitored is mellow.",
+														"reviewDate": "2016-12-29T08:48:03.619113+00:00"
+													}
+												],
+												"6": "aef14b5b-88b4-4759-bc3c-60d22cff25ec",
+												"7": "\"fb00dbc2-0000-1a00-0000-618bfb380000\""
+											},
+											{
+												"0": "6Z4bAJmi7yGengAAAAAAAA==",
+												"1": "1636563768",
+												"2": "53704",
+												"3": "fd913d84-a300-4af0-87ea-07c767604666",
+												"4": [
+													3223
+												],
+												"5": [
+													{
+														"productId": 3816,
+														"reviewText": "The box this comes in is 3 yard by 6 light-year and weights 15 gram!!!",
+														"reviewDate": "2018-02-18T02:22:38.2699687+00:00"
+													},
+													{
+														"productId": 2747,
+														"reviewText": "My neighbor Lular has one of these. She works as a cake decorator and she says it looks ragged.",
+														"reviewDate": "2018-12-28T23:14:28.2326387+00:00"
+													}
+												],
+												"6": "e6675495-8d3b-4a44-a058-9765be9c7c4d",
+												"7": "\"fb00dcc2-0000-1a00-0000-618bfb380000\""
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "_rid",
+												"type": "string"
+											},
+											{
+												"key": "1",
+												"name": "_ts",
+												"type": "bigint"
+											},
+											{
+												"key": "2",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "3",
+												"name": "cartId",
+												"type": "string"
+											},
+											{
+												"key": "4",
+												"name": "preferredProducts",
+												"type": "ArrayType(LongType,true)"
+											},
+											{
+												"key": "5",
+												"name": "productReviews",
+												"type": "ArrayType(StructType(StructField(productId,LongType,true), StructField(reviewText,StringType,true), StructField(reviewDate,StringType,true)),true)"
+											},
+											{
+												"key": "6",
+												"name": "id",
+												"type": "string"
+											},
+											{
+												"key": "7",
+												"name": "_etag",
+												"type": "string"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [
+												"0"
+											],
+											"seriesFieldKeys": [
+												"1"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							},
+							"8ded0245-9afe-40a3-8b79-88705fff7d07": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": [],
+												"1": "48391",
+												"2": [
+													{
+														"productId": 1917,
+														"reviewText": "My co-worker Ali has one of these. He says it looks towering.",
+														"reviewDate": "2017-11-15T17:47:37.1543848+00:00"
+													},
+													{
+														"productId": 4012,
+														"reviewText": "My neighbor Isabela has one of these. She works as a taxidermist and she says it looks monochromatic.",
+														"reviewDate": "2018-03-12T07:14:25.2793383+00:00"
+													},
+													{
+														"productId": 1206,
+														"reviewText": "It only works when I'm South Korea.",
+														"reviewDate": "2018-07-13T09:21:33.660689+00:00"
+													},
+													{
+														"productId": 4876,
+														"reviewText": "i use it barely when i'm in my store.",
+														"reviewDate": "2019-12-08T00:38:20.0355169+00:00"
+													},
+													{
+														"productId": 1294,
+														"reviewText": "i use it for 10 weeks when i'm in my sauna.",
+														"reviewDate": "2019-01-28T20:31:45.3276289+00:00"
+													}
+												],
+												"3": "c54a9f01-d0ba-445f-a920-ed74d343f02a"
+											},
+											{
+												"0": [
+													2345,
+													444,
+													1596,
+													4752
+												],
+												"1": "52191",
+												"2": [
+													{
+														"productId": 1652,
+														"reviewText": "I tried to belly-flop it but got Turkish Delight all over it.",
+														"reviewDate": "2017-06-21T10:14:35.7204375+00:00"
+													},
+													{
+														"productId": 1243,
+														"reviewText": "talk about sadness.",
+														"reviewDate": "2018-11-07T19:59:55.5323558+00:00"
+													}
+												],
+												"3": "7da76b06-0a7c-4e3d-8545-c5c9f430f229"
+											},
+											{
+												"0": [
+													2247,
+													220,
+													721,
+													1411
+												],
+												"1": "51106",
+												"2": [
+													{
+														"productId": 1823,
+														"reviewText": "This generating works excessively well. It speedily improves my baseball by a lot.",
+														"reviewDate": "2018-10-22T01:15:06.984903+00:00"
+													},
+													{
+														"productId": 2195,
+														"reviewText": "one of my hobbies is baking. and when i'm baking this works great.",
+														"reviewDate": "2019-10-30T12:17:44.6299364+00:00"
+													},
+													{
+														"productId": 4813,
+														"reviewText": "My locust loves to play with it.",
+														"reviewDate": "2018-04-09T23:26:08.1958889+00:00"
+													},
+													{
+														"productId": 159,
+														"reviewText": "This Corporate works excessively well. It mortally improves my golf by a lot.",
+														"reviewDate": "2017-10-29T20:46:12.0445352+00:00"
+													}
+												],
+												"3": "b95922ed-5324-481a-98ab-0d5ae66a88ee"
+											},
+											{
+												"0": [],
+												"1": "60504",
+												"2": [
+													{
+														"productId": 908,
+														"reviewText": "This Security works certainly well. It perfectly improves my tennis by a lot.",
+														"reviewDate": "2020-02-16T19:15:27.1979393+00:00"
+													},
+													{
+														"productId": 876,
+														"reviewText": "this Indiana is standard.",
+														"reviewDate": "2020-03-10T04:29:07.2444099+00:00"
+													}
+												],
+												"3": "96f97207-c1da-48a6-89de-38ac0d5ffb54"
+											},
+											{
+												"0": [
+													1817,
+													4785,
+													2382,
+													20
+												],
+												"1": "69552",
+												"2": [
+													{
+														"productId": 3659,
+														"reviewText": "this optical is vertical.",
+														"reviewDate": "2019-05-17T01:27:29.6952668+00:00"
+													},
+													{
+														"productId": 4152,
+														"reviewText": "It only works when I'm Wake Island.",
+														"reviewDate": "2017-05-13T17:40:53.8789057+00:00"
+													},
+													{
+														"productId": 2975,
+														"reviewText": "i use it once a week when i'm in my firetruck.",
+														"reviewDate": "2017-01-13T00:31:29.2403021+00:00"
+													},
+													{
+														"productId": 4896,
+														"reviewText": "i use it once in a while when i'm in my ring.",
+														"reviewDate": "2016-08-26T19:54:28.1780871+00:00"
+													},
+													{
+														"productId": 3759,
+														"reviewText": "My neighbor Lonnie has one of these. She works as a hobbit and she says it looks microscopic.",
+														"reviewDate": "2016-07-07T05:04:53.2938511+00:00"
+													}
+												],
+												"3": "43745ba9-ed5e-4cf9-b9d0-524421f57a1b"
+											},
+											{
+												"0": [
+													1560,
+													1559,
+													4953,
+													618,
+													559,
+													611,
+													2505,
+													1801,
+													1726
+												],
+												"1": "40917",
+												"2": [
+													{
+														"productId": 589,
+														"reviewText": "heard about this on instrumental country radio, decided to give it a try.",
+														"reviewDate": "2020-04-18T08:35:05.1783495+00:00"
+													},
+													{
+														"productId": 1650,
+														"reviewText": "one of my hobbies is cooking. and when i'm cooking this works great.",
+														"reviewDate": "2019-05-07T22:17:47.0524377+00:00"
+													},
+													{
+														"productId": 4666,
+														"reviewText": "I saw one of these in Libya and I bought one.",
+														"reviewDate": "2017-01-17T07:15:37.7090528+00:00"
+													},
+													{
+														"productId": 4604,
+														"reviewText": "this clicks-and-mortar is standard.",
+														"reviewDate": "2018-07-13T17:28:39.9302726+00:00"
+													},
+													{
+														"productId": 2272,
+														"reviewText": "this Intelligent is top-notch.",
+														"reviewDate": "2018-08-04T09:13:37.2728626+00:00"
+													}
+												],
+												"3": "1f07d4f3-fb01-4988-b812-9d120f03ec6f"
+											},
+											{
+												"0": [
+													2150,
+													1585
+												],
+												"1": "42669",
+												"2": [
+													{
+														"productId": 3770,
+														"reviewText": "My neighbor Georgine has one of these. She works as a fireman and she says it looks colorful.",
+														"reviewDate": "2018-05-23T02:33:59.3909597+00:00"
+													},
+													{
+														"productId": 4671,
+														"reviewText": "i use it every Tuesday when i'm in my homeless shelter.",
+														"reviewDate": "2018-01-27T19:37:29.5927804+00:00"
+													},
+													{
+														"productId": 1367,
+														"reviewText": "talk about shame.",
+														"reviewDate": "2020-04-06T07:09:23.9341835+00:00"
+													},
+													{
+														"productId": 1919,
+														"reviewText": "one of my hobbies is poetry. and when i'm writing poems this works great.",
+														"reviewDate": "2019-02-26T00:19:01.2804968+00:00"
+													},
+													{
+														"productId": 52,
+														"reviewText": "heard about this on rebetiko radio, decided to give it a try.",
+														"reviewDate": "2020-05-02T16:12:32.6890486+00:00"
+													}
+												],
+												"3": "27e836ec-5fca-4e3c-a583-7dd9b22693bf"
+											},
+											{
+												"0": [
+													1440,
+													3279,
+													2778,
+													902,
+													59,
+													3919
+												],
+												"1": "43661",
+												"2": [],
+												"3": "8b4469c2-827f-4bd0-b46b-151587103fe3"
+											},
+											{
+												"0": [
+													4789,
+													230,
+													468,
+													23,
+													2138
+												],
+												"1": "49181",
+												"2": [
+													{
+														"productId": 4454,
+														"reviewText": "My neighbor Aldona has one of these. She works as a butler and she says it looks humongous.",
+														"reviewDate": "2020-04-14T10:35:59.0928011+00:00"
+													},
+													{
+														"productId": 4217,
+														"reviewText": "This Colorado works quite well. It pointedly improves my golf by a lot.",
+														"reviewDate": "2016-06-05T04:46:34.4406303+00:00"
+													},
+													{
+														"productId": 3114,
+														"reviewText": "this bandwidth-monitored is mellow.",
+														"reviewDate": "2016-12-29T08:48:03.619113+00:00"
+													}
+												],
+												"3": "6de345c1-6d34-4e89-9a32-0c24fab18eb1"
+											},
+											{
+												"0": [
+													3223
+												],
+												"1": "53704",
+												"2": [
+													{
+														"productId": 3816,
+														"reviewText": "The box this comes in is 3 yard by 6 light-year and weights 15 gram!!!",
+														"reviewDate": "2018-02-18T02:22:38.2699687+00:00"
+													},
+													{
+														"productId": 2747,
+														"reviewText": "My neighbor Lular has one of these. She works as a cake decorator and she says it looks ragged.",
+														"reviewDate": "2018-12-28T23:14:28.2326387+00:00"
+													}
+												],
+												"3": "fd913d84-a300-4af0-87ea-07c767604666"
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "preferredProducts",
+												"type": "ArrayType(LongType,true)"
+											},
+											{
+												"key": "1",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "2",
+												"name": "productReviews",
+												"type": "ArrayType(StructType(StructField(productId,LongType,true), StructField(reviewText,StringType,true), StructField(reviewDate,StringType,true)),true)"
+											},
+											{
+												"key": "3",
+												"name": "cartId",
+												"type": "string"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [
+												"3"
+											],
+											"seriesFieldKeys": [
+												"1"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							},
+							"65e5b152-c040-46ed-83c6-5c63e2f6ccd3": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "48391",
+												"1": {
+													"productId": 1917,
+													"reviewText": "My co-worker Ali has one of these. He says it looks towering.",
+													"reviewDate": "2017-11-15T17:47:37.1543848+00:00"
+												}
+											},
+											{
+												"0": "48391",
+												"1": {
+													"productId": 4012,
+													"reviewText": "My neighbor Isabela has one of these. She works as a taxidermist and she says it looks monochromatic.",
+													"reviewDate": "2018-03-12T07:14:25.2793383+00:00"
+												}
+											},
+											{
+												"0": "48391",
+												"1": {
+													"productId": 1206,
+													"reviewText": "It only works when I'm South Korea.",
+													"reviewDate": "2018-07-13T09:21:33.660689+00:00"
+												}
+											},
+											{
+												"0": "48391",
+												"1": {
+													"productId": 4876,
+													"reviewText": "i use it barely when i'm in my store.",
+													"reviewDate": "2019-12-08T00:38:20.0355169+00:00"
+												}
+											},
+											{
+												"0": "48391",
+												"1": {
+													"productId": 1294,
+													"reviewText": "i use it for 10 weeks when i'm in my sauna.",
+													"reviewDate": "2019-01-28T20:31:45.3276289+00:00"
+												}
+											},
+											{
+												"0": "52191",
+												"1": {
+													"productId": 1652,
+													"reviewText": "I tried to belly-flop it but got Turkish Delight all over it.",
+													"reviewDate": "2017-06-21T10:14:35.7204375+00:00"
+												}
+											},
+											{
+												"0": "52191",
+												"1": {
+													"productId": 1243,
+													"reviewText": "talk about sadness.",
+													"reviewDate": "2018-11-07T19:59:55.5323558+00:00"
+												}
+											},
+											{
+												"0": "51106",
+												"1": {
+													"productId": 1823,
+													"reviewText": "This generating works excessively well. It speedily improves my baseball by a lot.",
+													"reviewDate": "2018-10-22T01:15:06.984903+00:00"
+												}
+											},
+											{
+												"0": "51106",
+												"1": {
+													"productId": 2195,
+													"reviewText": "one of my hobbies is baking. and when i'm baking this works great.",
+													"reviewDate": "2019-10-30T12:17:44.6299364+00:00"
+												}
+											},
+											{
+												"0": "51106",
+												"1": {
+													"productId": 4813,
+													"reviewText": "My locust loves to play with it.",
+													"reviewDate": "2018-04-09T23:26:08.1958889+00:00"
+												}
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "1",
+												"name": "productReviews",
+												"type": "StructType(StructField(productId,LongType,true), StructField(reviewText,StringType,true), StructField(reviewDate,StringType,true))"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [],
+											"seriesFieldKeys": [
+												"0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							},
+							"44eb917e-fcbf-4dd9-b8fb-e87793889705": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "52191",
+												"1": "2345"
+											},
+											{
+												"0": "52191",
+												"1": "444"
+											},
+											{
+												"0": "52191",
+												"1": "1596"
+											},
+											{
+												"0": "52191",
+												"1": "4752"
+											},
+											{
+												"0": "51106",
+												"1": "2247"
+											},
+											{
+												"0": "51106",
+												"1": "220"
+											},
+											{
+												"0": "51106",
+												"1": "721"
+											},
+											{
+												"0": "51106",
+												"1": "1411"
+											},
+											{
+												"0": "69552",
+												"1": "1817"
+											},
+											{
+												"0": "69552",
+												"1": "4785"
+											},
+											{
+												"0": "69552",
+												"1": "2382"
+											},
+											{
+												"0": "69552",
+												"1": "20"
+											},
+											{
+												"0": "40917",
+												"1": "1560"
+											},
+											{
+												"0": "40917",
+												"1": "1559"
+											},
+											{
+												"0": "40917",
+												"1": "4953"
+											},
+											{
+												"0": "40917",
+												"1": "618"
+											},
+											{
+												"0": "40917",
+												"1": "559"
+											},
+											{
+												"0": "40917",
+												"1": "611"
+											},
+											{
+												"0": "40917",
+												"1": "2505"
+											},
+											{
+												"0": "40917",
+												"1": "1801"
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "1",
+												"name": "productId",
+												"type": "bigint"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [
+												"1"
+											],
+											"seriesFieldKeys": [
+												"0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							},
+							"bd2571d8-cb41-4924-986f-af7b52ab6d23": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "1",
+												"1": "3687",
+												"2": "I saw one of these in Nauru and I bought one."
+											},
+											{
+												"0": "1",
+												"1": "4953",
+												"2": "My neighbor Georgine has one of these. She works as a fireman and she says it looks colorful."
+											},
+											{
+												"0": "1",
+												"1": "3397",
+												"2": "It only works when I'm Juan de Nova Island."
+											},
+											{
+												"0": "1",
+												"1": "2864",
+												"2": "i use it this time when i'm in my port-a-potty."
+											},
+											{
+												"0": "1",
+												"1": "3286",
+												"2": "I saw one of these in Saint Pierre and Miquelon and I bought one."
+											},
+											{
+												"0": "2",
+												"1": "1808",
+												"2": "It only works when I'm Samoa."
+											},
+											{
+												"0": "2",
+												"1": "4450",
+												"2": "My baboon loves to play with it."
+											},
+											{
+												"0": "2",
+												"1": "2900",
+												"2": "My co-worker Archer has one of these. He says it looks crooked."
+											},
+											{
+												"0": "2",
+												"1": "4151",
+												"2": "My neighbor Georgine has one of these. She works as a fireman and she says it looks colorful."
+											},
+											{
+												"0": "2",
+												"1": "374",
+												"2": "one of my hobbies is cooking. and when i'm cooking this works great."
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "1",
+												"name": "productId",
+												"type": "bigint"
+											},
+											{
+												"key": "2",
+												"name": "reviewText",
+												"type": "string"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [
+												"1"
+											],
+											"seriesFieldKeys": [
+												"0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							},
+							"16714b2e-df7c-45cb-8ff8-c01494a19d8b": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"0": "346",
+												"1": "389",
+												"2": "346",
+												"3": "389",
+												"4": "i use it once a week when i'm in my firetruck."
+											},
+											{
+												"0": "518",
+												"1": "684",
+												"2": "518",
+												"3": "684",
+												"4": "talk about bliss!!"
+											},
+											{
+												"0": "549",
+												"1": "1639",
+												"2": "549",
+												"3": "1639",
+												"4": "talk about anticipation!"
+											},
+											{
+												"0": "922",
+												"1": "1838",
+												"2": "922",
+												"3": "1838",
+												"4": "I saw one of these in Juan de Nova Island and I bought one."
+											},
+											{
+												"0": "929",
+												"1": "2478",
+												"2": "929",
+												"3": "2478",
+												"4": "The box this comes in is 5 kilometer by 6 yard and weights 18 gram."
+											},
+											{
+												"0": "1550",
+												"1": "2453",
+												"2": "1550",
+												"3": "2453",
+												"4": "I saw one of these in Tanzania and I bought one."
+											},
+											{
+												"0": "1557",
+												"1": "4063",
+												"2": "1557",
+												"3": "4063",
+												"4": "It only works when I'm Samoa."
+											},
+											{
+												"0": "1590",
+												"1": "656",
+												"2": "1590",
+												"3": "656",
+												"4": "I tried to vomit it but got bonbon all over it."
+											},
+											{
+												"0": "2177",
+												"1": "4163",
+												"2": "2177",
+												"3": "4163",
+												"4": "I tried to pepper it but got prune all over it."
+											},
+											{
+												"0": "2382",
+												"1": "1954",
+												"2": "2382",
+												"3": "1954",
+												"4": "My raven loves to play with it."
+											},
+											{
+												"0": "2662",
+												"1": "174",
+												"2": "2662",
+												"3": "174",
+												"4": "talk about contentment!!!"
+											},
+											{
+												"0": "2863",
+												"1": "4003",
+												"2": "2863",
+												"3": "4003",
+												"4": "talk about contempt!!!"
+											},
+											{
+												"0": "3496",
+												"1": "2044",
+												"2": "3496",
+												"3": "2044",
+												"4": "The box this comes in is 3 centimeter by 5 kilometer and weights 13 ounce!!"
+											},
+											{
+												"0": "3616",
+												"1": "3035",
+												"2": "3616",
+												"3": "3035",
+												"4": "The box this comes in is 3 kilometer by 5 foot and weights 16 megaton!!!"
+											},
+											{
+												"0": "3892",
+												"1": "2297",
+												"2": "3892",
+												"3": "2297",
+												"4": "My Shih-Tzu loves to play with it."
+											},
+											{
+												"0": "3971",
+												"1": "2624",
+												"2": "3971",
+												"3": "2624",
+												"4": "My goldfinch loves to play with it."
+											},
+											{
+												"0": "4684",
+												"1": "2739",
+												"2": "4684",
+												"3": "2739",
+												"4": "This deliverables works certainly well. It excitedly improves my football by a lot."
+											},
+											{
+												"0": "5014",
+												"1": "319",
+												"2": "5014",
+												"3": "319",
+												"4": "this Graphic Interface is vertical."
+											},
+											{
+												"0": "5316",
+												"1": "2078",
+												"2": "5316",
+												"3": "2078",
+												"4": "The box this comes in is 3 meter by 5 foot and weights 11 kilogram."
+											},
+											{
+												"0": "5389",
+												"1": "734",
+												"2": "5389",
+												"3": "734",
+												"4": "one of my hobbies is sailing. and when i'm sailing this works great."
+											},
+											{
+												"0": "6049",
+												"1": "3487",
+												"2": "6049",
+												"3": "3487",
+												"4": "talk about pleasure!"
+											},
+											{
+												"0": "6235",
+												"1": "403",
+												"2": "6235",
+												"3": "403",
+												"4": "My macaroni penguin loves to play with it."
+											},
+											{
+												"0": "6435",
+												"1": "2809",
+												"2": "6435",
+												"3": "2809",
+												"4": "heard about this on bouyon radio, decided to give it a try."
+											},
+											{
+												"0": "6686",
+												"1": "3320",
+												"2": "6686",
+												"3": "3320",
+												"4": "This Timor-Leste works quite well. It romantically improves my golf by a lot."
+											},
+											{
+												"0": "7520",
+												"1": "3854",
+												"2": "7520",
+												"3": "3854",
+												"4": "I tried to grab it but got bonbon all over it."
+											},
+											{
+												"0": "7761",
+												"1": "3586",
+												"2": "7761",
+												"3": "3586",
+												"4": "It only works when I'm Niger."
+											},
+											{
+												"0": "8482",
+												"1": "2640",
+												"2": "8482",
+												"3": "2640",
+												"4": "I saw one of these in Sao Tome and Principe and I bought one."
+											},
+											{
+												"0": "9117",
+												"1": "3298",
+												"2": "9117",
+												"3": "3298",
+												"4": "i use it daily when i'm in my outhouse."
+											},
+											{
+												"0": "9505",
+												"1": "321",
+												"2": "9505",
+												"3": "321",
+												"4": "heard about this on Kansas City jazz radio, decided to give it a try."
+											},
+											{
+												"0": "9935",
+												"1": "4477",
+												"2": "9935",
+												"3": "4477",
+												"4": "My penguin loves to play with it."
+											},
+											{
+												"0": "9939",
+												"1": "2513",
+												"2": "9939",
+												"3": "2513",
+												"4": "My neighbor Eller has one of these. She works as a butler and she says it looks smoky."
+											},
+											{
+												"0": "10302",
+												"1": "957",
+												"2": "10302",
+												"3": "957",
+												"4": "heard about this on ndombolo radio, decided to give it a try."
+											},
+											{
+												"0": "11546",
+												"1": "989",
+												"2": "11546",
+												"3": "989",
+												"4": "My neighbor Germaine has one of these. She works as a salesman and she says it looks red."
+											},
+											{
+												"0": "11697",
+												"1": "520",
+												"2": "11697",
+												"3": "520",
+												"4": "one of my hobbies is drawing. and when i'm drawing this works great."
+											},
+											{
+												"0": "11948",
+												"1": "4603",
+												"2": "11948",
+												"3": "4603",
+												"4": "talk about surprise!!!"
+											},
+											{
+												"0": "12075",
+												"1": "2765",
+												"2": "12075",
+												"3": "2765",
+												"4": "My velociraptor loves to play with it."
+											},
+											{
+												"0": "12632",
+												"1": "543",
+												"2": "12632",
+												"3": "543",
+												"4": "this models is vertical."
+											},
+											{
+												"0": "12760",
+												"1": "3681",
+												"2": "12760",
+												"3": "3681",
+												"4": "this generating is awesome."
+											},
+											{
+												"0": "12869",
+												"1": "210",
+												"2": "12869",
+												"3": "210",
+												"4": "My neighbor Montserrat has one of these. She works as a circus performer and she says it looks shriveled."
+											},
+											{
+												"0": "13119",
+												"1": "3553",
+												"2": "13119",
+												"3": "3553",
+												"4": "It only works when I'm Martinique."
+											},
+											{
+												"0": "13634",
+												"1": "2830",
+												"2": "13634",
+												"3": "2830",
+												"4": "It only works when I'm Martinique."
+											},
+											{
+												"0": "13794",
+												"1": "1964",
+												"2": "13794",
+												"3": "1964",
+												"4": "My co-worker Cato has one of these. He says it looks sopping."
+											},
+											{
+												"0": "14883",
+												"1": "770",
+												"2": "14883",
+												"3": "770",
+												"4": "I saw this on TV and wanted to give it a try."
+											},
+											{
+												"0": "14892",
+												"1": "3114",
+												"2": "14892",
+												"3": "3114",
+												"4": "I saw one of these in Canada and I bought one."
+											},
+											{
+												"0": "16338",
+												"1": "1627",
+												"2": "16338",
+												"3": "1627",
+												"4": "heard about this on bouyon radio, decided to give it a try."
+											},
+											{
+												"0": "16715",
+												"1": "3060",
+												"2": "16715",
+												"3": "3060",
+												"4": "This Handmade Soft Towels works too well. It nonchalantly improves my baseball by a lot."
+											},
+											{
+												"0": "17080",
+												"1": "4607",
+												"2": "17080",
+												"3": "4607",
+												"4": "I tried to strangle it but got hazelnut all over it."
+											},
+											{
+												"0": "18314",
+												"1": "54",
+												"2": "18314",
+												"3": "54",
+												"4": "talk about surprise!!!"
+											},
+											{
+												"0": "18355",
+												"1": "2828",
+												"2": "18355",
+												"3": "2828",
+												"4": "this Dominican Republic is nifty."
+											},
+											{
+												"0": "18882",
+												"1": "1229",
+												"2": "18882",
+												"3": "1229",
+												"4": "This SDD works really well. It wildly improves my baseball by a lot."
+											},
+											{
+												"0": "19202",
+												"1": "118",
+												"2": "19202",
+												"3": "118",
+												"4": "one of my hobbies is web-browsing. and when i'm browsing the web this works great."
+											},
+											{
+												"0": "19221",
+												"1": "4500",
+												"2": "19221",
+												"3": "4500",
+												"4": "My ant loves to play with it."
+											},
+											{
+												"0": "19442",
+												"1": "4155",
+												"2": "19442",
+												"3": "4155",
+												"4": "It only works when I'm Niue."
+											},
+											{
+												"0": "19645",
+												"1": "4427",
+												"2": "19645",
+												"3": "4427",
+												"4": "i use it never when i'm in my hotel."
+											},
+											{
+												"0": "20269",
+												"1": "498",
+												"2": "20269",
+												"3": "498",
+												"4": "I saw one of these in New Zealand and I bought one."
+											},
+											{
+												"0": "20302",
+												"1": "4627",
+												"2": "20302",
+												"3": "4627",
+												"4": "i use it this time when i'm in my port-a-potty."
+											},
+											{
+												"0": "20647",
+												"1": "4020",
+												"2": "20647",
+												"3": "4020",
+												"4": "This Investment Account works excessively well. It mortally improves my golf by a lot."
+											},
+											{
+												"0": "20681",
+												"1": "4622",
+												"2": "20681",
+												"3": "4622",
+												"4": "My dog loves to play with it."
+											},
+											{
+												"0": "20764",
+												"1": "1536",
+												"2": "20764",
+												"3": "1536",
+												"4": "It only works when I'm New Caledonia."
+											},
+											{
+												"0": "20875",
+												"1": "2420",
+												"2": "20875",
+												"3": "2420",
+												"4": "I tried to manhandle it but got bun all over it."
+											},
+											{
+												"0": "20950",
+												"1": "3595",
+												"2": "20950",
+												"3": "3595",
+												"4": "this override is mellow."
+											},
+											{
+												"0": "21066",
+												"1": "3590",
+												"2": "21066",
+												"3": "3590",
+												"4": "My beagle loves to play with it."
+											},
+											{
+												"0": "21294",
+												"1": "2075",
+												"2": "21294",
+												"3": "2075",
+												"4": "My co-worker Bryton has one of these. He says it looks ragged."
+											},
+											{
+												"0": "21822",
+												"1": "2665",
+												"2": "21822",
+												"3": "2665",
+												"4": "It only works when I'm Chad."
+											},
+											{
+												"0": "21883",
+												"1": "486",
+												"2": "21883",
+												"3": "486",
+												"4": "i use it daily when i'm in my courthouse."
+											},
+											{
+												"0": "21933",
+												"1": "2613",
+												"2": "21933",
+												"3": "2613",
+												"4": "I saw one of these in Vanuatu and I bought one."
+											},
+											{
+												"0": "22196",
+												"1": "4677",
+												"2": "22196",
+												"3": "4677",
+												"4": "i use it barely when i'm in my store."
+											},
+											{
+												"0": "22496",
+												"1": "3441",
+												"2": "22496",
+												"3": "3441",
+												"4": "one of my hobbies is poetry. and when i'm writing poems this works great."
+											},
+											{
+												"0": "22598",
+												"1": "3439",
+												"2": "22598",
+												"3": "3439",
+												"4": "this reboot is slurpee."
+											},
+											{
+												"0": "22630",
+												"1": "4680",
+												"2": "22630",
+												"3": "4680",
+												"4": "I tried to shred it but got watermelon all over it."
+											},
+											{
+												"0": "22776",
+												"1": "3890",
+												"2": "22776",
+												"3": "3890",
+												"4": "My chicken loves to play with it."
+											},
+											{
+												"0": "22915",
+												"1": "493",
+												"2": "22915",
+												"3": "493",
+												"4": "My neighbor Aldona has one of these. She works as a butler and she says it looks humongous."
+											},
+											{
+												"0": "23408",
+												"1": "2793",
+												"2": "23408",
+												"3": "2793",
+												"4": "It only works when I'm Kuwait."
+											},
+											{
+												"0": "23642",
+												"1": "1027",
+												"2": "23642",
+												"3": "1027",
+												"4": "It only works when I'm Finland."
+											},
+											{
+												"0": "23655",
+												"1": "2853",
+												"2": "23655",
+												"3": "2853",
+												"4": "this Roads is honest."
+											},
+											{
+												"0": "23756",
+												"1": "2183",
+												"2": "23756",
+												"3": "2183",
+												"4": "heard about this on timba radio, decided to give it a try."
+											},
+											{
+												"0": "24063",
+												"1": "3241",
+												"2": "24063",
+												"3": "3241",
+												"4": "talk about sadness!!"
+											},
+											{
+												"0": "24607",
+												"1": "1851",
+												"2": "24607",
+												"3": "1851",
+												"4": "My co-worker Bryton has one of these. He says it looks ragged."
+											},
+											{
+												"0": "24725",
+												"1": "3342",
+												"2": "24725",
+												"3": "3342",
+												"4": "i use it once a week when i'm in my firetruck."
+											},
+											{
+												"0": "24773",
+												"1": "2048",
+												"2": "24773",
+												"3": "2048",
+												"4": "one of my hobbies is piano. and when i'm playing piano this works great."
+											},
+											{
+												"0": "25821",
+												"1": "4351",
+												"2": "25821",
+												"3": "4351",
+												"4": "talk about lust!!"
+											},
+											{
+												"0": "26099",
+												"1": "427",
+												"2": "26099",
+												"3": "427",
+												"4": "My neighbor Albertina has one of these. She works as a gardener and she says it looks humongous."
+											},
+											{
+												"0": "26447",
+												"1": "3048",
+												"2": "26447",
+												"3": "3048",
+												"4": "The box this comes in is 3 yard by 6 light-year and weights 11 megaton!!"
+											},
+											{
+												"0": "26687",
+												"1": "375",
+												"2": "26687",
+												"3": "375",
+												"4": "this Auto Loan Account is revolting."
+											},
+											{
+												"0": "27575",
+												"1": "2822",
+												"2": "27575",
+												"3": "2822",
+												"4": "heard about this on instrumental country radio, decided to give it a try."
+											},
+											{
+												"0": "27603",
+												"1": "2274",
+												"2": "27603",
+												"3": "2274",
+												"4": "It only works when I'm Juan de Nova Island."
+											},
+											{
+												"0": "28570",
+												"1": "2168",
+												"2": "28570",
+												"3": "2168",
+												"4": "i use it hardly when i'm in my prison."
+											},
+											{
+												"0": "28581",
+												"1": "4831",
+												"2": "28581",
+												"3": "4831",
+												"4": "This Bedfordshire works certainly well. It perfectly improves my tennis by a lot."
+											},
+											{
+												"0": "29060",
+												"1": "2221",
+												"2": "29060",
+												"3": "2221",
+												"4": "My neighbor Lular has one of these. She works as a cake decorator and she says it looks ragged."
+											},
+											{
+												"0": "29396",
+												"1": "4255",
+												"2": "29396",
+												"3": "4255",
+												"4": "This feed works so well. It imperfectly improves my baseball by a lot."
+											},
+											{
+												"0": "29507",
+												"1": "1183",
+												"2": "29507",
+												"3": "1183",
+												"4": "i use it never again when i'm in my station."
+											},
+											{
+												"0": "29929",
+												"1": "4471",
+												"2": "29929",
+												"3": "4471",
+												"4": "i use it once in a while when i'm in my ring."
+											},
+											{
+												"0": "30316",
+												"1": "2638",
+												"2": "30316",
+												"3": "2638",
+												"4": "This Credit Card Account works so well. It delightedly improves my football by a lot."
+											},
+											{
+												"0": "30770",
+												"1": "1188",
+												"2": "30770",
+												"3": "1188",
+												"4": "I tried to hang it but got jelly bean all over it."
+											},
+											{
+												"0": "30854",
+												"1": "236",
+												"2": "30854",
+												"3": "236",
+												"4": "The box this comes in is 4 yard by 5 inch and weights 12 pound!"
+											},
+											{
+												"0": "31273",
+												"1": "3544",
+												"2": "31273",
+												"3": "3544",
+												"4": "I saw one of these in Barbados and I bought one."
+											},
+											{
+												"0": "31958",
+												"1": "4916",
+												"2": "31958",
+												"3": "4916",
+												"4": "This Analyst works too well. It buoyantly improves my football by a lot."
+											},
+											{
+												"0": "31992",
+												"1": "3988",
+												"2": "31992",
+												"3": "3988",
+												"4": "The box this comes in is 3 yard by 6 yard and weights 19 pound!!!"
+											},
+											{
+												"0": "32955",
+												"1": "2207",
+												"2": "32955",
+												"3": "2207",
+												"4": "I saw one of these in Finland and I bought one."
+											},
+											{
+												"0": "33017",
+												"1": "1727",
+												"2": "33017",
+												"3": "1727",
+												"4": "It only works when I'm Martinique."
+											}
+										],
+										"schema": [
+											{
+												"key": "0",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "1",
+												"name": "productId",
+												"type": "bigint"
+											},
+											{
+												"key": "2",
+												"name": "userId",
+												"type": "bigint"
+											},
+											{
+												"key": "3",
+												"name": "productId",
+												"type": "bigint"
+											},
+											{
+												"key": "4",
+												"name": "reviewText",
+												"type": "string"
+											}
+										]
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "sum",
+											"categoryFieldKeys": [
+												"1"
+											],
+											"seriesFieldKeys": [
+												"0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							}
+						}
+					},
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"# Read from Cosmos DB analytical store into a Spark DataFrame and display 10 rows from the DataFrame\n",
+							"# To select a preferred list of regions in a multi-region Cosmos DB account, add .option(\"spark.cosmos.preferredRegions\", \"<Region1>,<Region2>\")\n",
+							"\n",
+							"df = spark.read\\\n",
+							"    .format(\"cosmos.olap\")\\\n",
+							"    .option(\"spark.synapse.linkedService\", \"asacosmosdb01\")\\\n",
+							"    .option(\"spark.cosmos.container\", \"UserProfileHTAP\")\\\n",
+							"    .load()\n",
+							"\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"unwanted_cols = {'_attachments','_etag','_rid','_self','_ts','collectionType','id'}\r\n",
+							"\r\n",
+							"# Remove unwanted columns from the columns collection\r\n",
+							"cols = list(set(df.columns) - unwanted_cols)\r\n",
+							"\r\n",
+							"profiles = df.select(cols)\r\n",
+							"\r\n",
+							"display(profiles.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"profiles.count()"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"from pyspark.sql.functions import udf, explode\r\n",
+							"\r\n",
+							"preferredProductsFlat=profiles.select('userId',explode('preferredProducts').alias('productId'))\r\n",
+							"productReviewsFlat=profiles.select('userId',explode('productReviews').alias('productReviews'))\r\n",
+							"display(productReviewsFlat.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"display(preferredProductsFlat.limit(20))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"productReviews = (productReviewsFlat.select('userId','productReviews.productId','productReviews.reviewText')\r\n",
+							"    .orderBy('userId'))\r\n",
+							"\r\n",
+							"display(productReviews.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"preferredProductReviews = (preferredProductsFlat.join(productReviews,\r\n",
+							"    (preferredProductsFlat.userId == productReviews.userId) &\r\n",
+							"    (preferredProductsFlat.productId == productReviews.productId))\r\n",
+							")\r\n",
+							"\r\n",
+							"display(preferredProductReviews.limit(100))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 7
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Demo')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 1,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "1",
+						"spark.dynamicAllocation.maxExecutors": "1",
+						"spark.autotune.trackingId": "685152e8-2646-4d97-b5ca-4f9bf71b4fe7"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"print('test')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\r\n",
+							"select 1"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							""
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Explore with Spark')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 1,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "1",
+						"spark.dynamicAllocation.maxExecutors": "1",
+						"spark.autotune.trackingId": "e629e953-f923-48ab-b097-fe7b5b4ac739"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "markdown",
+						"source": [
+							"# Exploring and fixing data with Synapse Spark\r\n",
+							"\r\n",
+							"In this task, you will use a Synapse Spark notebook to explore a few of the files in the **wwi-02/sale-poc** folder in the data lake. You will also use Python code to fix the issues with the **sale-20170502.csv** file.\r\n",
+							"\r\n",
+							"1. First, attach this notebook to the **SparkPool01** Spark pool.\r\n",
+							"2. In the code cell below, replace **asadatalake*SUFFIX*** `with the name of the primary data lake storage account associated with your Syanpse workspace. Then execute the cell by selecting the **Run cell** button that becomes visible when you select the cell.\r\n",
+							"\r\n",
+							"> **Note**: The cell may take some time to run because the spark cluster must be started."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"adls_account_name = 'asadatalakej2dxbgn'"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"## Exploring files with Spark\r\n",
+							"\r\n",
+							"1. The first step in exploring data using Synapse Spark is to load a file from the data lake. For this, we'll use the **spark.read.load()** method of the **SparkSession** to load the **sale-20170501.csv** file into a [DataFrame](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html#datasets-and-dataframes).\r\n",
+							""
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# First, load the file `sale-20170501.csv` file, which we know from our previous exploration to be formatted correctly.\r\n",
+							"# Note the use of the `header` and `inferSchema` parameters. Header indicates the first row of the file contains column headers,\r\n",
+							"# and `inferSchema` instruct Spark to use data within the file to infer data types.\r\n",
+							"df = spark.read.load(f'abfss://wwi-02@{adls_account_name}.dfs.core.windows.net/sale-poc/sale-20170501.csv', format='csv', header=True, inferSchema=True)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"## View the contents of the DataFrame\r\n",
+							"\r\n",
+							"With the data from the **sale-20170501.csv** file loaded into a data frame, we can now use various methods of a data frame to explore the properties of the data.\r\n",
+							"\r\n",
+							"1. Let's look at the data as it was imported. Execute the cell below to view and inspect the data in the data frame."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"diagram": {
+								"activateDiagramType": 1,
+								"chartConfig": {
+									"category": "bar",
+									"keys": [
+										"TransactionId"
+									],
+									"values": [
+										"CustomerId"
+									],
+									"yLabel": "CustomerId",
+									"xLabel": "TransactionId",
+									"aggregation": "SUM",
+									"aggByBackend": false
+								},
+								"aggData": "{\"CustomerId\":{\"cdd2ed88-8aae-4295-884a-ac4d40c3c33c\":44,\"e067fc11-e07d-4517-bc93-f7dc4b44f35e\":18}}",
+								"isSummary": false,
+								"previewData": {
+									"filter": null
+								},
+								"isSql": false
+							}
+						},
+						"source": [
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"2. Like we saw during exploration with the SQL on-demand capabilities of Azure Synapse, Spark allows us to view and query against the data contained within files. \r\n",
+							"\r\n",
+							"3. Now, use the **printSchema()** method of the data frame to view the results of using the **inferSchema** parameter when creating the data frame. Execute the cell below and observe the output."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# Now, print the inferred schema. We will need this information below to help with the missing headers in the May 2, 2017 file.\r\n",
+							"df.printSchema()"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"4. The **printSchema** method outputs both field names and data types that are based on the Spark engine's evaluation of the data contained within each field.\r\n",
+							"\r\n",
+							"    > We can use this information later to help define the schema for the poorly formed **sale-20170502.csv** file. In addition to the field names and data types, we should note the number of features or columns contained in the file. In this case, note that there are 11 fields. That will be used to determine where to split the single row of data.\r\n",
+							"\r\n",
+							"5. As an example of further exploration we can do, run the cell below to create and display a new data frame that contains an ordered list of distinct Customer and Product Id pairings. We can use these types of functions to find invalid or empty values quickly in targeted fields."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"diagram": {
+								"activateDiagramType": 1,
+								"chartConfig": {
+									"category": "bar",
+									"keys": [],
+									"values": [
+										"ProductId"
+									],
+									"yLabel": "ProductId",
+									"xLabel": "",
+									"aggregation": "SUM",
+									"aggByBackend": false
+								},
+								"aggData": "{\"ProductId\":{\"\":189206}}",
+								"isSummary": false,
+								"previewData": {
+									"filter": null
+								},
+								"isSql": false
+							}
+						},
+						"source": [
+							"# Create a new data frame containing a list of distinct CustomerId and ProductId values in descending order of the CustomerId.\r\n",
+							"df_distinct_products = df.select('CustomerId', 'ProductId').distinct().orderBy('CustomerId')\r\n",
+							"\r\n",
+							"# Display the first 100 rows of the resulting data frame.\r\n",
+							"display(df_distinct_products.limit(100))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"6. Next, let's attempt to open and explore the **sale-20170502.csv** file using the **load()** method, as we did above."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# Next, let's try to read in the May 2, 2017 file using the same `load()` method we used for the first file.\r\n",
+							"df = spark.read.load(f'abfss://wwi-02@{adls_account_name}.dfs.core.windows.net/sale-poc/sale-20170502.csv', format='csv')\r\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"7. As we saw in T-SQL, we receive a similar error in Spark that the number of columns processed may have exceeded limit of 20480 columns. To work with the data in this file, we need to use more advanced methods, as you will see in the next section below.\n",
+							""
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"## Handling and fixing poorly formed CSV files\r\n",
+							"\r\n",
+							"> The steps below provide example code for fixing the poorly-formed CSV file, **sale-20170502.csv** we discovered during exploration of the files in the **wwi-02/sale-poc** folder. This is just one of many ways to handle \"fixing\" a poorly-formed CSV file using Spark.\r\n",
+							"\r\n",
+							"1. To \"fix\" the bad file, we need to take a programmatic approach, using Python to read in the contents of the file and then parse them to put them into the proper shape.\r\n",
+							"\r\n",
+							"    > To handle the data being in a single row, we can use the **textFile()** method of our **SparkContext** to read the file as a collection of rows into a resilient distributed dataset (RDD). This allows us to get around the errors around the number of columns because we are essentially getting a single string value stored in a single column.\r\n",
+							"\r\n",
+							"2. Execute the cell below to load the RDD with data from the file."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# Import the NumPy library. NumPy is a python library used for working with arrays.\r\n",
+							"import numpy as np\r\n",
+							"\r\n",
+							"# Read the CSV file into a resilient distributed dataset (RDD) as a text file. This will read each row of the file into rows in an RDD.\r\n",
+							"rdd = sc.textFile(f'abfss://wwi-02@{adls_account_name}.dfs.core.windows.net/sale-poc/sale-20170502.csv')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"3. With the data now stored in an RDD, we can access the first, and only, populated row in the RDD, and split that into individual fields. We know from our inspection of the file in Notepad++ that it all the fields are separated by a comma (,), so let's start by splitting on that to create an array of field values. Execute the cell below to create a data array."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# Since we know there is only one row, grab the first row of the RDD and split in on the field delimiter (comma).\r\n",
+							"data = rdd.first().split(',')\r\n",
+							"\r\n",
+							"field_count = len(data)\r\n",
+							"# Print out the count of fields read into the array.\r\n",
+							"print(field_count)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"4. By splitting the row on the field delimiter, we created an array of all the individual field values in the file, the count of which you can see above.\n",
+							"\n",
+							"5. Now, run the cell below to do a quick calculation on the expected number of rows that will be generated by parsing every 11 fields into a single row."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"import math\r\n",
+							"\r\n",
+							"expected_row_count = math.floor(field_count / 11)\r\n",
+							"print(f'The expected row count is: {expected_row_count}')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"6. Next, let's create an array to store the data associated with each \"row\".\r\n",
+							"\r\n",
+							"    > We will set the max_index to the number of columns that are expected in each row. We know from our exploration of other files in the **wwi-02/sale-poc** folder that they contain 11 columns, so that is the value we will set.\r\n",
+							"\r\n",
+							"7. In addition to setting variables, we will use the cell below to loop through the **data** array and assign every 11 values to a row. By doing this, we are able to \"split\" the data that was once a single row into appropriate rows containing the proper data and columns from the file.\r\n",
+							"\r\n",
+							"8. Execute the cell below to create an array of rows from the file data."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"# Create an array to store the data associated with each \"row\". Set the max_index to the number of columns that are in each row. This is 11, which we noted above when viewing the schema of the May 1 file.\r\n",
+							"row_list = []\r\n",
+							"max_index = 11\r\n",
+							"\r\n",
+							"# Now, we are going to loop through the array of values extracted from the single row of the file and build rows consisting of 11 columns.\r\n",
+							"while max_index <= len(data):\r\n",
+							"    row = [data[i] for i in np.arange(max_index-11, max_index)]\r\n",
+							"    row_list.append(row)\r\n",
+							"\r\n",
+							"    max_index += 11\r\n",
+							"\r\n",
+							"print(f'The row array contains {len(row_list)} rows. The expected number of rows was {expected_row_count}.')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"9. The last thing we need to do to be able to work with the file data as rows is to read it into a Spark DataFrame. In the cell below, we use the **createDataFrame()** method to convert the **row_list** array into a data frame, which also adding names for the columns. Column names are based on the schema we observed in the well formatted files in the **wwi-02/sale-poc** directory.\r\n",
+							"\r\n",
+							"10. Execute the cell below to create a data frame containing row data from the file and then display the first 10 rows."
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"diagram": {
+								"activateDiagramType": 1,
+								"chartConfig": {
+									"category": "bar",
+									"keys": [
+										"TransactionId"
+									],
+									"values": [
+										"TransactionId"
+									],
+									"yLabel": "TransactionId",
+									"xLabel": "TransactionId",
+									"aggregation": "COUNT",
+									"aggByBackend": false
+								},
+								"aggData": "{\"TransactionId\":{\"5455a4b4-62bd-401a-b5c6-79ea24f30531\":5,\"a4116581-5aad-416a-b767-aefa516737b1\":5}}",
+								"isSummary": false,
+								"previewData": {
+									"filter": null
+								},
+								"isSql": false
+							}
+						},
+						"source": [
+							"# Finally, we can use the row_list we created above to create a DataFrame. We can add to this a schema parameter, which contains the column names we saw in the schema of the first file.\r\n",
+							"df_fixed = spark.createDataFrame(row_list,schema=['TransactionId', 'CustomerId', 'ProductId', 'Quantity', 'Price', 'TotalAmount', 'TransactionDateId', 'ProfitAmount', 'Hour', 'Minute', 'StoreId'])\r\n",
+							"display(df_fixed.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"## Write the \"fixed\" file into the data lake\r\n",
+							"\r\n",
+							"1. The last step we will take as part of our exploration and file fixing process is to write the data back into the data lake, so it can be ingested following the same process as the other files in the **wwi-02/sale-poc** folder.\r\n",
+							"\r\n",
+							"2. Execute the cell below to save the data frame into the data lake a series of files in a folder named **sale-20170502-fixed**.\r\n",
+							"\r\n",
+							"    > Note: Spark parallelizes workloads across worker nodes, so when saving files, you will notice they are saved as a collection \"part\" files, and not as a single file. While there are some libraries you can use to create a single file, it is helpful to get used to working with files generated via Spark notebooks as they are natively created.\r\n",
+							""
+						],
+						"attachments": null
+					},
+					{
+						"cell_type": "code",
+						"source": [
+							"df_fixed.write.format('csv').option('header',True).mode('overwrite').option('sep',',').save(f'abfss://wwi-02@{adls_account_name}.dfs.core.windows.net/sale-poc/sale-20170502-fixed')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "markdown",
+						"source": [
+							"## Inspect the fixed file in the data lake\r\n",
+							"\r\n",
+							"1. With the fixed file written to the data lake, you can quickly inpsect it to verify the files are now formatted properly. Select the **wwi-02** tab above to view the **sale-poc** folder.\r\n",
+							"2. Refresh the folder view (expand the **More** menu if necessary) and then open the **sale-20170502-fixed** folder.\r\n",
+							"3. In the **sale-20170502-fixed** folder, right-click the first file whose name begins with **part** and whose extension is **.csv** and select **Preview** from the context menu.\r\n",
+							"4. In the **Preview** dialog, verify you see the proper columns and that the data looks valid in each field.\r\n",
+							"\r\n",
+							"## Wrap-up\r\n",
+							"\r\n",
+							"Throughout this exercise, you used a Spark notebook to explore data stored within files in the data lake. You used Python code to extract data from a poorly formatted CSV file, assemble the data from that file into proper rows, and then write the \"fixed\" file back out into your data lake.\r\n",
+							"\r\n",
+							"You can now return to the lab guide to continue with the next section of Lab 2.\r\n",
+							""
+						],
+						"attachments": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Hyperspace')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "9a52b346-5619-4bca-a713-c7abb50d840b"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"from hyperspace import *  \r\n",
+							"from com.microsoft.hyperspace import *\r\n",
+							"from com.microsoft.hyperspace.index import *\r\n",
+							"\r\n",
+							"# Disable BroadcastHashJoin, so Spark will use standard SortMergeJoin. Currently, Hyperspace indexes utilize SortMergeJoin to speed up query.\r\n",
+							"spark.conf.set(\"spark.sql.autoBroadcastJoinThreshold\", -1)\r\n",
+							"\r\n",
+							"# Replace the value below with the name of your primary ADLS Gen2 account for your Synapse workspace\r\n",
+							"datalake = 'asadatalakej2dxbgn'\r\n",
+							"\r\n",
+							"dfSales = spark.read.parquet(\"abfss://wwi-02@\" + datalake + \".dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet\")\r\n",
+							"dfSales.show(10)\r\n",
+							"\r\n",
+							"dfCustomers = spark.read.load(\"abfss://wwi-02@\" + datalake + \".dfs.core.windows.net/data-generators/generator-customer-clean.csv\", format=\"csv\", header=True)\r\n",
+							"dfCustomers.show(10)\r\n",
+							"\r\n",
+							"# Create an instance of Hyperspace\r\n",
+							"hyperspace = Hyperspace(spark)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#create indexes: each one contains a name, a set of indexed columns and a set of included columns\r\n",
+							"indexConfigSales = IndexConfig(\"indexSALES\", [\"CustomerId\"], [\"TotalAmount\"])\r\n",
+							"indexConfigCustomers = IndexConfig(\"indexCUSTOMERS\", [\"CustomerId\"], [\"FullName\"])\r\n",
+							"\r\n",
+							"hyperspace.createIndex(dfSales, indexConfigSales)\t\t\t# only create index once\r\n",
+							"hyperspace.createIndex(dfCustomers, indexConfigCustomers)\t# only create index once\r\n",
+							"hyperspace.indexes().show()"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df1 = dfSales.filter(\"\"\"CustomerId = 6\"\"\").select(\"\"\"TotalAmount\"\"\")\r\n",
+							"df1.show()\r\n",
+							"df1.explain(True)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Enable Hyperspace - Hyperspace optimization rules become visible to the Spark optimizer and exploit existing Hyperspace indexes to optimize user queries\r\n",
+							"Hyperspace.enable(spark)\r\n",
+							"df1 = dfSales.filter(\"\"\"CustomerId = 6\"\"\").select(\"\"\"TotalAmount\"\"\")\r\n",
+							"df1.show()\r\n",
+							"df1.explain(True)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df1 = dfSales.filter(\"\"\"CustomerId = 6\"\"\").select(\"\"\"TotalAmount\"\"\")\r\n",
+							"\r\n",
+							"spark.conf.set(\"spark.hyperspace.explain.displayMode\", \"html\")\r\n",
+							"hyperspace.explain(df1, True, displayHTML)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"eqJoin = dfSales.join(dfCustomers, dfSales.CustomerId == dfCustomers.CustomerId).select(dfSales.TotalAmount, dfCustomers.FullName)\r\n",
+							"\r\n",
+							"hyperspace.explain(eqJoin, True, displayHTML)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Disable Hyperspace - Hyperspace rules no longer apply during query optimization. Disabling Hyperspace has no impact on created indexes because they remain intact\r\n",
+							"Hyperspace.disable(spark)\r\n",
+							"\r\n",
+							"hyperspace.deleteIndex(\"indexSALES\")\r\n",
+							"hyperspace.vacuumIndex(\"indexSALES\")\r\n",
+							"hyperspace.deleteIndex(\"indexCUSTOMERS\")\r\n",
+							"hyperspace.vacuumIndex(\"indexCUSTOMERS\")"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from notebookutils import mssparkutils\r\n",
+							"\r\n",
+							"#\r\n",
+							"# Microsoft Spark Utilities\r\n",
+							"#\r\n",
+							"# https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/microsoft-spark-utilities?pivots=programming-language-python\r\n",
+							"#\r\n",
+							"\r\n",
+							"# Azure storage access info\r\n",
+							"blob_account_name = datalake\r\n",
+							"blob_container_name = 'wwi-02'\r\n",
+							"blob_relative_path = '/'\r\n",
+							"linkedServiceName = datalake\r\n",
+							"blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linkedServiceName)\r\n",
+							"\r\n",
+							"# Allow SPARK to access from Blob remotely\r\n",
+							"spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)\r\n",
+							"\r\n",
+							"files = mssparkutils.fs.ls('/')\r\n",
+							"for file in files:\r\n",
+							"    print(file.name, file.isDir, file.isFile, file.path, file.size)\r\n",
+							"\r\n",
+							"mssparkutils.fs.mkdirs('/SomeNewFolder')\r\n",
+							"\r\n",
+							"files = mssparkutils.fs.ls('/')\r\n",
+							"for file in files:\r\n",
+							"    print(file.name, file.isDir, file.isFile, file.path, file.size)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 8
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 4')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "171bf201-60fa-4f32-9522-0f06090885ed"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-v341w5u/providers/Microsoft.Synapse/workspaces/asaworkspacev341w5u/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacev341w5u.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://wwi-02@asadatalakev341w5u.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/Day=20191231/sale-small-20191231-snappy.parquet', format='parquet')\r\n",
+							"display(df.limit(10))\r\n",
+							"\r\n",
+							"datalake = 'asadatalakev341w5u'"
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.printSchema()"
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"from pyspark.sql import SparkSession\r\n",
+							"from pyspark.sql.types import *\r\n",
+							"from pyspark.sql.functions import *\r\n",
+							"\r\n",
+							"profitByDateProduct = (df.groupBy(\"TransactionDate\",\"ProductId\")\r\n",
+							"    .agg(\r\n",
+							"        sum(\"ProfitAmount\").alias(\"(sum)ProfitAmount\"),\r\n",
+							"        round(avg(\"Quantity\"), 4).alias(\"(avg)Quantity\"),\r\n",
+							"        sum(\"Quantity\").alias(\"(sum)Quantity\"))\r\n",
+							"    .orderBy(\"TransactionDate\"))\r\n",
+							"display(profitByDateProduct.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = (spark.read \\\r\n",
+							"        .option('inferSchema', 'true') \\\r\n",
+							"        .json('abfss://wwi-02@' + datalake + '.dfs.core.windows.net/online-user-profiles-02/*.json', multiLine=True)\r\n",
+							"    )\r\n",
+							"\r\n",
+							"df.printSchema()"
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# create a view called user_profiles\r\n",
+							"df.createOrReplaceTempView(\"user_profiles\")"
+						],
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\r\n",
+							"\r\n",
+							"SELECT * FROM user_profiles LIMIT 10"
+						],
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import udf, explode\r\n",
+							"\r\n",
+							"flat=df.select('visitorId',explode('topProductPurchases').alias('topProductPurchases_flat'))\r\n",
+							"flat.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topPurchases = (flat.select('visitorId','topProductPurchases_flat.productId','topProductPurchases_flat.itemsPurchasedLast12Months')\r\n",
+							"    .orderBy('visitorId'))\r\n",
+							"\r\n",
+							"topPurchases.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 8
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"# Let's order by the number of items purchased in the last 12 months\r\n",
+							"sortedTopPurchases = topPurchases.orderBy(\"itemsPurchasedLast12Months\")\r\n",
+							"\r\n",
+							"display(sortedTopPurchases.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topPurchases.orderBy(\"itemsPurchasedLast12Months desc\")"
+						],
+						"outputs": [],
+						"execution_count": 10
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"sortedTopPurchases = (topPurchases\r\n",
+							"    .orderBy( col(\"itemsPurchasedLast12Months\").desc() ))\r\n",
+							"\r\n",
+							"display(sortedTopPurchases.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": 13
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"groupedTopPurchases = (sortedTopPurchases.select(\"visitorId\")\r\n",
+							"    .groupBy(\"visitorId\")\r\n",
+							"    .agg(count(\"*\").alias(\"total\"))\r\n",
+							"    .orderBy(\"visitorId\") )\r\n",
+							"\r\n",
+							"display(groupedTopPurchases.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": 14
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"groupedTopPurchases = (sortedTopPurchases.select(\"visitorId\",\"itemsPurchasedLast12Months\")\r\n",
+							"    .groupBy(\"visitorId\")\r\n",
+							"    .agg(sum(\"itemsPurchasedLast12Months\").alias(\"totalItemsPurchased\"))\r\n",
+							"    .orderBy(\"visitorId\") )\r\n",
+							"\r\n",
+							"display(groupedTopPurchases.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": 15
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"# Create a temporary view for top purchases so we can load from Scala\r\n",
+							"topPurchases.createOrReplaceTempView(\"top_purchases\")"
+						],
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "scala"
+							}
+						},
+						"source": [
+							"%%spark\r\n",
+							"// Make sure the name of the dedcated SQL pool (SQLPool01 below) matches the name of your SQL pool.\r\n",
+							"val df = spark.sqlContext.sql(\"select * from top_purchases\")\r\n",
+							"df.write.synapsesql(\"SQLPool01.wwi.TopPurchases\", Constants.INTERNAL)"
+						],
+						"outputs": [],
+						"execution_count": 13
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"dfsales = spark.read.load('abfss://wwi-02@' + datalake + '.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/*/*.parquet', format='parquet')\r\n",
+							"display(dfsales.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "scala"
+							}
+						},
+						"source": [
+							"%%spark\r\n",
+							"// Make sure the name of the SQL pool (SQLPool01 below) matches the name of your SQL pool.\r\n",
+							"val df2 = spark.read.synapsesql(\"SQLPool01.wwi.TopPurchases\")\r\n",
+							"df2.createTempView(\"top_purchases_sql\")\r\n",
+							"\r\n",
+							" df2.head(10)"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"dfTopPurchasesFromSql = sqlContext.table(\"top_purchases_sql\")\r\n",
+							"\r\n",
+							"display(dfTopPurchasesFromSql.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"inner_join = dfsales.join(dfTopPurchasesFromSql,\r\n",
+							"    (dfsales.CustomerId == dfTopPurchasesFromSql.visitorId) & (dfsales.ProductId == dfTopPurchasesFromSql.productId))\r\n",
+							"\r\n",
+							"inner_join_agg = (inner_join.select(\"CustomerId\",\"TotalAmount\",\"Quantity\",\"itemsPurchasedLast12Months\",\"top_purchases_sql.productId\")\r\n",
+							"    .groupBy([\"CustomerId\",\"top_purchases_sql.productId\"])\r\n",
+							"    .agg(\r\n",
+							"        sum(\"TotalAmount\").alias(\"TotalAmountDecember\"),\r\n",
+							"        sum(\"Quantity\").alias(\"TotalQuantityDecember\"),\r\n",
+							"        sum(\"itemsPurchasedLast12Months\").alias(\"TotalItemsPurchasedLast12Months\"))\r\n",
+							"    .orderBy(\"CustomerId\") )\r\n",
+							"\r\n",
+							"display(inner_join_agg.limit(100))"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Lab 7 -  Calculate Top 5 Products')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 1,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "1",
+						"spark.dynamicAllocation.maxExecutors": "1",
+						"spark.autotune.trackingId": "a0244113-dfd3-4d4f-93bb-1fe3f6a611bb"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						}
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://wwi-02@asadatalakes4xt9l0.dfs.core.windows.net/top-products/*.parquet', format='parquet')\r\n",
+							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"topPurchases = df.select(\r\n",
+							"    \"UserId\", \"ProductId\",\r\n",
+							"    \"ItemsPurchasedLast12Months\", \"IsTopProduct\",\r\n",
+							"    \"IsPreferredProduct\")\r\n",
+							"\r\n",
+							"# Populate a temporary view so we can query from SQL\r\n",
+							"topPurchases.createOrReplaceTempView(\"top_purchases\")\r\n",
+							"\r\n",
+							"topPurchases.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"from pyspark.sql.functions import *\r\n",
+							"\r\n",
+							"topPreferredProducts = (topPurchases\r\n",
+							"    .filter( col(\"IsTopProduct\") == True)\r\n",
+							"    .filter( col(\"IsPreferredProduct\") == True)\r\n",
+							"    .orderBy( col(\"ItemsPurchasedLast12Months\").desc() ))\r\n",
+							"\r\n",
+							"topPreferredProducts.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\r\n",
+							"\r\n",
+							"CREATE OR REPLACE TEMPORARY VIEW top_5_products\r\n",
+							"AS\r\n",
+							"select UserId, ProductId, ItemsPurchasedLast12Months\r\n",
+							"from (select *,\r\n",
+							"            row_number() over (partition by UserId order by ItemsPurchasedLast12Months desc) as seqnum\r\n",
+							"    from top_purchases\r\n",
+							"    ) a\r\n",
+							"where seqnum <= 5 and IsTopProduct == true and IsPreferredProduct = true\r\n",
+							"order by a.UserId"
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"top5Products = sqlContext.table(\"top_5_products\")\r\n",
+							"\r\n",
+							"top5Products.show(100)"
+						],
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"print('before filter: ', topPreferredProducts.count(), ', after filter: ', top5Products.count())"
+						],
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"top5ProductsOverall = (top5Products.select(\"ProductId\",\"ItemsPurchasedLast12Months\")\r\n",
+							"    .groupBy(\"ProductId\")\r\n",
+							"    .agg( sum(\"ItemsPurchasedLast12Months\").alias(\"Total\") )\r\n",
+							"    .orderBy( col(\"Total\").desc() )\r\n",
+							"    .limit(5))\r\n",
+							"\r\n",
+							"top5ProductsOverall.show()"
+						],
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import uuid\r\n",
+							"\r\n",
+							"# Generate random GUID\r\n",
+							"runId = uuid.uuid4()"
+						],
+						"outputs": [],
+						"execution_count": 8
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"\r\n",
+							"top5ProductsOverall.write.parquet('abfss://wwi-02@asadatalakes4xt9l0.dfs.core.windows.net/top5-products/' + str(runId) + '.parquet')"
+						],
+						"outputs": [],
+						"execution_count": 9
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Simple df read and write')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "SparkPool01",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "d79611ee-a891-493e-8f67-5518d0af8adf"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/e6c6066c-121b-4225-b65c-42ee806a9be4/resourceGroups/data-engineering-synapse-j2dxbgn/providers/Microsoft.Synapse/workspaces/asaworkspacej2dxbgn/bigDataPools/SparkPool01",
+						"name": "SparkPool01",
+						"type": "Spark",
+						"endpoint": "https://asaworkspacej2dxbgn.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/SparkPool01",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://wwi-02@asadatalakej2dxbgn.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/Day=20191231/sale-small-20191231-snappy.parquet', format='parquet')\r\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df.write.parquet('abfss://wwi-02@asadatalakej2dxbgn.dfs.core.windows.net/sale-small/Year=2019/Quarter=Q4/Month=12/Day=20191231/sale-small-20191231-snappy-test.parquet')"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 2
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SparkPool01')]",
+			"type": "Microsoft.Synapse/workspaces/bigDataPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"autoPause": {
+					"enabled": true,
+					"delayInMinutes": 15
+				},
+				"autoScale": {
+					"enabled": true,
+					"maxNodeCount": 4,
+					"minNodeCount": 3
+				},
+				"nodeCount": 0,
+				"nodeSize": "Small",
+				"nodeSizeFamily": "MemoryOptimized",
+				"sparkVersion": "2.4",
+				"isComputeIsolationEnabled": false,
+				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "uksouth"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLPool01')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "uksouth"
+		}
+	]
+}
