@@ -1,5 +1,5 @@
 {
-	"name": "asal400_saleheap_asa",
+	"name": "asal400_saleheap_asa1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "sqlpool01_import01",

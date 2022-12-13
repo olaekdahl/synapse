@@ -38,13 +38,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "asal400_december_sales",
+						"referenceName": "asal400_december_sales1",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "asal400_saleheap_asa",
+						"referenceName": "asal400_saleheap_asa1",
 						"type": "DatasetReference"
 					}
 				]

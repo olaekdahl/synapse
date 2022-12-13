@@ -1,5 +1,5 @@
 {
-	"name": "asal400_campaign_analytics_source",
+	"name": "asal400_campaign_analytics_source1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "asadatalakev341w5u",

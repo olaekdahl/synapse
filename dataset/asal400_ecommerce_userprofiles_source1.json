@@ -1,5 +1,5 @@
 {
-	"name": "asal400_ecommerce_userprofiles_source",
+	"name": "asal400_ecommerce_userprofiles_source1",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "asadatalakev341w5u",

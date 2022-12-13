@@ -34,7 +34,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "cosmos_db_htap",
+						"referenceName": "cosmos_db_htap1",
 						"type": "DatasetReference"
 					}
 				]
