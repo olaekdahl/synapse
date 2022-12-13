@@ -1,5 +1,5 @@
 {
-	"name": "asastoreavyzfh9",
+	"name": "asastore",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],

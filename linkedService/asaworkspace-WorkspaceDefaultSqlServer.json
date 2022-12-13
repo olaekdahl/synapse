@@ -1,9 +1,9 @@
 {
-	"name": "asaworkspacejw4kblp-WorkspaceDefaultSqlServer",
+	"name": "asaworkspace-WorkspaceDefaultSqlServer",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"typeProperties": {
-			"connectionString": "Data Source=tcp:asaworkspacejw4kblp.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+			"connectionString": "Data Source=tcp:asaworkspace9xipcf6.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
 		"parameters": {
 			"DBName": {

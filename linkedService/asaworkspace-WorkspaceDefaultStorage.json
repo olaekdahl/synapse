@@ -1,9 +1,9 @@
 {
-	"name": "asaworkspacejw4kblp-WorkspaceDefaultStorage",
+	"name": "asaworkspace-WorkspaceDefaultStorage",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"typeProperties": {
-			"url": "https://asadatalakejw4kblp.dfs.core.windows.net"
+			"url": "https://asadatalake9xipcf6.dfs.core.windows.net"
 		},
 		"type": "AzureBlobFS",
 		"connectVia": {
