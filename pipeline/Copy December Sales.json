@@ -31,7 +31,13 @@
 						},
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "asastorev341w5u",
+							"type": "LinkedServiceReference"
+						}
+					},
 					"dataIntegrationUnits": 8,
 					"translator": {
 						"type": "TabularTranslator",
