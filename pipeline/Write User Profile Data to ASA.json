@@ -21,7 +21,7 @@
 					},
 					"staging": {
 						"linkedService": {
-							"referenceName": "asadatalakeavyzfh9",
+							"referenceName": "asastorev341w5u",
 							"type": "LinkedServiceReference"
 						},
 						"folderPath": "staging/userprofiles"

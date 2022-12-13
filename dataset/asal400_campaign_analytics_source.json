@@ -2,7 +2,7 @@
 	"name": "asal400_campaign_analytics_source",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "asadatalakeavyzfh9",
+			"referenceName": "asadatalakev341w5u",
 			"type": "LinkedServiceReference"
 		},
 		"annotations": [],

@@ -16,12 +16,9 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "ParquetSource",
-						"storeSettings": {
-							"type": "AzureBlobFSReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						}
+						"type": "SqlDWSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
 					},
 					"sink": {
 						"type": "SqlDWSink",
@@ -154,7 +151,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "Parquet1asal400_december_sales",
+						"referenceName": "asal400_saleheap_asa",
 						"type": "DatasetReference"
 					}
 				],
