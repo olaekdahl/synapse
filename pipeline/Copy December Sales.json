@@ -16,20 +16,16 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "SqlDWSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
 					},
 					"sink": {
 						"type": "SqlDWSink",
-						"preCopyScript": "TRUNCATE TABLE wwi_perf.Sale_Heap",
-						"allowPolyBase": true,
-						"polyBaseSettings": {
-							"rejectValue": 0,
-							"rejectType": "value",
-							"useTypeDefault": true
-						},
-						"disableMetricsCollection": false
+						"allowCopyCommand": true
 					},
 					"enableStaging": true,
 					"stagingSettings": {
@@ -38,132 +34,17 @@
 							"type": "LinkedServiceReference"
 						}
 					},
-					"dataIntegrationUnits": 8,
-					"translator": {
-						"type": "TabularTranslator",
-						"mappings": [
-							{
-								"source": {
-									"name": "TransactionId",
-									"type": "String"
-								},
-								"sink": {
-									"name": "TransactionId",
-									"type": "Guid"
-								}
-							},
-							{
-								"source": {
-									"name": "CustomerId",
-									"type": "Int32"
-								},
-								"sink": {
-									"name": "CustomerId",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductId",
-									"type": "Int16"
-								},
-								"sink": {
-									"name": "ProductId",
-									"type": "Int16"
-								}
-							},
-							{
-								"source": {
-									"name": "Quantity",
-									"type": "SByte"
-								},
-								"sink": {
-									"name": "Quantity",
-									"type": "Byte"
-								}
-							},
-							{
-								"source": {
-									"name": "Price",
-									"type": "Decimal"
-								},
-								"sink": {
-									"name": "Price",
-									"type": "Decimal"
-								}
-							},
-							{
-								"source": {
-									"name": "TotalAmount",
-									"type": "Decimal"
-								},
-								"sink": {
-									"name": "TotalAmount",
-									"type": "Decimal"
-								}
-							},
-							{
-								"source": {
-									"name": "TransactionDate",
-									"type": "Int32"
-								},
-								"sink": {
-									"name": "TransactionDateId",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"name": "ProfitAmount",
-									"type": "Decimal"
-								},
-								"sink": {
-									"name": "ProfitAmount",
-									"type": "Decimal"
-								}
-							},
-							{
-								"source": {
-									"name": "Hour",
-									"type": "SByte"
-								},
-								"sink": {
-									"name": "Hour",
-									"type": "Byte"
-								}
-							},
-							{
-								"source": {
-									"name": "Minute",
-									"type": "SByte"
-								},
-								"sink": {
-									"name": "Minute",
-									"type": "Byte"
-								}
-							},
-							{
-								"source": {
-									"name": "StoreId",
-									"type": "Int16"
-								},
-								"sink": {
-									"name": "StoreId",
-									"type": "Int16"
-								}
-							}
-						]
-					}
+					"dataIntegrationUnits": 8
 				},
 				"inputs": [
 					{
-						"referenceName": "asal400_saleheap_asa",
+						"referenceName": "asal400_december_sales1",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "asal400_saleheap_asa",
+						"referenceName": "asal400_saleheap_asa1",
 						"type": "DatasetReference"
 					}
 				]

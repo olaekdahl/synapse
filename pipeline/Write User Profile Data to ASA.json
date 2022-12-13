@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "write_user_profile_to_asa",
+						"referenceName": "write_user_profile_to_asa1",
 						"type": "DataFlowReference"
 					},
 					"staging": {

@@ -15,7 +15,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "asal400_wwi_campaign_analytics_asa",
+						"referenceName": "asal400_wwi_campaign_analytics_asa1",
 						"type": "DatasetReference"
 					},
 					"name": "CampaignAnalyticsASA"

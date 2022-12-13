@@ -43,7 +43,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "customer_profile_cosmosdb",
+						"referenceName": "customer_profile_cosmosdb1",
 						"type": "DatasetReference"
 					}
 				]

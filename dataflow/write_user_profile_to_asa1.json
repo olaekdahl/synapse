@@ -1,12 +1,12 @@
 {
-	"name": "write_user_profile_to_asa",
+	"name": "write_user_profile_to_asa1",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "asal400_ecommerce_userprofiles_source",
+						"referenceName": "asal400_ecommerce_userprofiles_source1",
 						"type": "DatasetReference"
 					},
 					"name": "EcommerceUserProfiles"
@@ -22,7 +22,7 @@
 			"sinks": [
 				{
 					"dataset": {
-						"referenceName": "asal400_wwi_usertopproductpurchases_asa",
+						"referenceName": "asal400_wwi_usertopproductpurchases_asa1",
 						"type": "DatasetReference"
 					},
 					"name": "UserTopProductPurchasesASA"
