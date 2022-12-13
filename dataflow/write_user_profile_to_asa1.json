@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "asal400_customerprofile_cosmosdb1",
+						"referenceName": "asal400_customerprofile_cosmosdb",
 						"type": "DatasetReference"
 					},
 					"name": "UserProfiles"
